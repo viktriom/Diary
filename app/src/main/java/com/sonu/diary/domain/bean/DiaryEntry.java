@@ -26,6 +26,8 @@ public class DiaryEntry {
     private double entryLocationLon;
     @DatabaseField
     private int securityClearanceLevel;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private DiaryPage diaryPage;
 
     public DiaryEntry(){
 
@@ -87,5 +89,21 @@ public class DiaryEntry {
 
     public void setEntryLocationLon(double entryLocationLon) {
         this.entryLocationLon = entryLocationLon;
+    }
+
+    public int getSecurityClearanceLevel() {
+        return securityClearanceLevel;
+    }
+
+    public void setSecurityClearanceLevel(int securityClearanceLevel) {
+        this.securityClearanceLevel = securityClearanceLevel;
+    }
+
+    public DiaryPage getDiaryPage() {
+        return diaryPage;
+    }
+
+    public void setDiaryPage(DiaryPage diaryPage) {
+        this.diaryPage = diaryPage;
     }
 }

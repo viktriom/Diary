@@ -13,6 +13,7 @@ import java.util.Locale;
 public class DateUtils {
 
     private static Calendar calendar = null;
+    public static final String defaultPrintableDateFormat = "MM/dd/yyyy HH:mm:ss";
 
 
     private static void init(){
@@ -44,44 +45,42 @@ public class DateUtils {
         return format.format(ts);
     }
 
-
-
     public static String getStringTimeFromTimestamp(Timestamp ts){
-        return getStringDateFromTimestampInFormat(ts,"MM/dd/yyyy HH:mm:ss").split(" ")[1];
+        return getStringDateFromTimestampInFormat(ts,defaultPrintableDateFormat).split(" ")[1];
     }
 
-    public static String getTimeComponentFromTimestamp(Timestamp ts,int index){
-        String strDate = getStringDateFromTimestampInFormat(ts,"MM/dd/yyyy HH:mm:ss").split(" ")[1];
+    private static String getTimeComponentFromTimestamp(Timestamp ts,int index){
+        String strDate = getStringDateFromTimestampInFormat(ts,defaultPrintableDateFormat).split(" ")[1];
         return strDate.split(":")[index];
     }
 
-    public static String getDateComponentFromTimestamp(Timestamp ts, int index){
-        String strDate = getStringDateFromTimestampInFormat(ts,"MM/dd/yyyy HH:mm:ss").split(" ")[0];
+    private static String getDateComponentFromTimestamp(Timestamp ts, int index){
+        String strDate = getStringDateFromTimestampInFormat(ts,defaultPrintableDateFormat).split(" ")[0];
         return strDate.split("/")[index];
     }
 
-    public static String getDayOfMonthFromTimestamp(Timestamp ts){
-        return getDateComponentFromTimestamp(ts,1);
+    public static int getDayOfMonthFromTimestamp(Timestamp ts){
+        return Integer.parseInt(getDateComponentFromTimestamp(ts, 1));
     }
 
-    public static String getYearFromTimestamp(Timestamp ts){
-        return getDateComponentFromTimestamp(ts,2);
+    public static int getYearFromTimestamp(Timestamp ts){
+        return Integer.parseInt(getDateComponentFromTimestamp(ts, 2));
     }
 
-    public static String getMonthFromTimestamp(Timestamp ts){
-        return getDateComponentFromTimestamp(ts,0);
+    public static int getMonthFromTimestamp(Timestamp ts){
+        return Integer.parseInt(getDateComponentFromTimestamp(ts, 0));
     }
 
-    public static String getHoursFromTimestamp(Timestamp ts){
-        return getTimeComponentFromTimestamp(ts,0);
+    public static int getHoursFromTimestamp(Timestamp ts){
+        return Integer.parseInt(getTimeComponentFromTimestamp(ts, 0));
     }
 
-    public static String getMinutesFromTimestamp(Timestamp ts){
-        return getTimeComponentFromTimestamp(ts,1);
+    public static int getMinutesFromTimestamp(Timestamp ts){
+        return Integer.parseInt(getTimeComponentFromTimestamp(ts, 1));
     }
 
-    public static String getSecondsFromTimestamp(Timestamp ts){
-        return getTimeComponentFromTimestamp(ts,2);
+    public static int getSecondsFromTimestamp(Timestamp ts){
+        return Integer.parseInt(getTimeComponentFromTimestamp(ts, 2));
     }
 
 }

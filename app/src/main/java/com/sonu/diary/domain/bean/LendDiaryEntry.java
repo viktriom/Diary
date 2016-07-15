@@ -19,6 +19,8 @@ public class LendDiaryEntry extends DiaryEntry{
     private Date lendOn;
     @DatabaseField
     private String narration;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private DiaryEntry diaryEntry;
 
     public LendDiaryEntry(){
 
@@ -64,5 +66,13 @@ public class LendDiaryEntry extends DiaryEntry{
 
     public void setNarration(String narration) {
         this.narration = narration;
+    }
+
+    public DiaryEntry getDiaryEntry() {
+        return diaryEntry;
+    }
+
+    public void setDiaryEntry(DiaryEntry diaryEntry) {
+        this.diaryEntry = diaryEntry;
     }
 }

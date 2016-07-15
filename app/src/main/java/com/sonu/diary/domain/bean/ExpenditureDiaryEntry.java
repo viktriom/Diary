@@ -14,6 +14,8 @@ public class ExpenditureDiaryEntry extends DiaryEntry {
     private String narration;
     @DatabaseField
     private double amount;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private DiaryEntry diaryEntry;
 
     public ExpenditureDiaryEntry(){
 
@@ -41,5 +43,13 @@ public class ExpenditureDiaryEntry extends DiaryEntry {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public DiaryEntry getDiaryEntry() {
+        return diaryEntry;
+    }
+
+    public void setDiaryEntry(DiaryEntry diaryEntry) {
+        this.diaryEntry = diaryEntry;
     }
 }

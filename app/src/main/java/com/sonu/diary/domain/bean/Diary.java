@@ -1,8 +1,10 @@
 package com.sonu.diary.domain.bean;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,16 +15,16 @@ import java.util.List;
 public class Diary {
     @DatabaseField(id = true)
     private int year;
-    @DatabaseField
+    @DatabaseField (foreign = true)
     private Person owner;
-    @DatabaseField(foreign = true)
-    private List<DiaryPage> diaryPages;
+    @ForeignCollectionField (eager = true)
+    private Collection<DiaryPage> diaryPages;
 
     public Diary(){
 
     }
 
-    public Diary(int year, Person owner, List<DiaryPage> diaryPages) {
+    public Diary(int year, Person owner, Collection<DiaryPage> diaryPages) {
         this.year = year;
         this.owner = owner;
         this.diaryPages = diaryPages;
@@ -44,11 +46,11 @@ public class Diary {
         this.owner = owner;
     }
 
-    public List<DiaryPage> getDiaryPages() {
+    public Collection<DiaryPage> getDiaryPages() {
         return diaryPages;
     }
 
-    public void setDiaryPages(List<DiaryPage> diaryPages) {
+    public void setDiaryPages(Collection<DiaryPage> diaryPages) {
         this.diaryPages = diaryPages;
     }
 }

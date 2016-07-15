@@ -1,9 +1,11 @@
 package com.sonu.diary.domain.bean;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.Date;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,17 +13,19 @@ import java.util.List;
  */
 @DatabaseTable
 public class DiaryPage {
-    @DatabaseField(foreign = true)
-    private List<DiaryEntry> diaryEntry;
+    @ForeignCollectionField(eager = true)
+    private Collection<DiaryEntry> diaryEntry;
     @DatabaseField
     private Date pageDate;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Diary diary;
 
     public DiaryPage(List<DiaryEntry> diaryEntry, Date pageDate) {
         this.diaryEntry = diaryEntry;
         this.pageDate = pageDate;
     }
 
-    public List<DiaryEntry> getDiaryEntry() {
+    public Collection<DiaryEntry> getDiaryEntry() {
         return diaryEntry;
     }
 
