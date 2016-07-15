@@ -1,24 +1,38 @@
 package com.sonu.diary.domain.bean;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import java.security.Timestamp;
+import java.sql.Time;
 import java.util.Date;
 
 /**
  * Created by sonu on 11/07/16.
  */
+@DatabaseTable
 public class DiaryEntry {
+    @DatabaseField
     private String entryTitle;
+    @DatabaseField
     private String entryDescription;
-    private Date entryCreatedOn;
-    private Date entryLastUpdatedOn;
+    @DatabaseField
+    private Timestamp entryCreatedOn;
+    @DatabaseField
+    private Timestamp entryLastUpdatedOn;
+    @DatabaseField
     private double entryLocationLat;
+    @DatabaseField
     private double entryLocationLon;
+    @DatabaseField
     private int securityClearanceLevel;
 
     public DiaryEntry(){
 
     }
 
-    public DiaryEntry(String entryTitle, String entryDescription, Date entryCreatedOn, Date entryLastUpdatedOn, double entryLocationLat, double entryLocationLon) {
+    public DiaryEntry(String entryTitle, String entryDescription, Timestamp entryCreatedOn,
+                      Timestamp entryLastUpdatedOn, double entryLocationLat, double entryLocationLon) {
         this.entryTitle = entryTitle;
         this.entryDescription = entryDescription;
         this.entryCreatedOn = entryCreatedOn;
@@ -43,19 +57,19 @@ public class DiaryEntry {
         this.entryDescription = entryDescription;
     }
 
-    public Date getEntryCreatedOn() {
+    public Timestamp getEntryCreatedOn() {
         return entryCreatedOn;
     }
 
-    public void setEntryCreatedOn(Date entryCreatedOn) {
+    public void setEntryCreatedOn(Timestamp entryCreatedOn) {
         this.entryCreatedOn = entryCreatedOn;
     }
 
-    public Date getEntryLastUpdatedOn() {
+    public Timestamp getEntryLastUpdatedOn() {
         return entryLastUpdatedOn;
     }
 
-    public void setEntryLastUpdatedOn(Date entryLastUpdatedOn) {
+    public void setEntryLastUpdatedOn(Timestamp entryLastUpdatedOn) {
         this.entryLastUpdatedOn = entryLastUpdatedOn;
     }
 

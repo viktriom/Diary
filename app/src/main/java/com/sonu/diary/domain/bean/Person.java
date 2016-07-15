@@ -1,17 +1,27 @@
 package com.sonu.diary.domain.bean;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import java.sql.Date;
 import org.joda.time.DateTime;
 
 /**
  * Created by sonu on 11/07/16.
  */
+@DatabaseTable
 public class Person {
+    @DatabaseField
     private String initials;
+    @DatabaseField
     private String firstName;
+    @DatabaseField
     private String lastName;
+    @DatabaseField
     private String middleName;
+    @DatabaseField
     private Date dateOfBirth;
+    @DatabaseField
     private float age;
 
     public Person(){

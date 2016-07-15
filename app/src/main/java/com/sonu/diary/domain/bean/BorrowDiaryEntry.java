@@ -1,21 +1,30 @@
 package com.sonu.diary.domain.bean;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import java.security.Timestamp;
 import java.util.Date;
 
 /**
  * Created by sonu on 11/07/16.
  */
+@DatabaseTable
 public class BorrowDiaryEntry extends DiaryEntry {
+    @DatabaseField
     private Person borrowedFrom;
+    @DatabaseField
     private double amount;
+    @DatabaseField
     private Date borrowedOn;
+    @DatabaseField
     private String narration;
 
     public BorrowDiaryEntry(){
     }
 
-    public BorrowDiaryEntry(String entryTitle, String entryDescription, Date entryCreatedOn,
-                            Date entryLastUpdatedOn, double entryLocationLat,
+    public BorrowDiaryEntry(String entryTitle, String entryDescription, Timestamp entryCreatedOn,
+                            Timestamp entryLastUpdatedOn, double entryLocationLat,
                             double entryLocationLon, Person borrowedFrom, double amount,
                             Date borrowedOn, String narration) {
         super(entryTitle, entryDescription, entryCreatedOn, entryLastUpdatedOn, entryLocationLat, entryLocationLon);

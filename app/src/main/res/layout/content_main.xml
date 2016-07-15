@@ -11,20 +11,27 @@
 
     <TextView android:text="Date and Time" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView2" />
+        android:id="@+id/txtViewPageDate" />
 
     <TextView android:text="Thought" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textView2"
+        android:layout_alignTop="@+id/txtViewPageDate"
         android:layout_alignParentEnd="true"
-        android:id="@+id/textView4" />
+        android:id="@+id/txtViewPageAdditional" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Entries for Today"
-        android:id="@+id/textView3"
-        android:layout_alignTop="@+id/textView2"
+        android:id="@+id/txtViewPageHeader"
+        android:layout_alignTop="@+id/txtViewPageDate"
         android:layout_centerHorizontal="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lstEntries"
+        android:layout_below="@+id/txtViewPageHeader"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
