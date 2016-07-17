@@ -3,15 +3,17 @@ package com.sonu.diary.domain.bean;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
  * Created by sonu on 11/07/16.
  */
 @DatabaseTable
-public class BorrowDiaryEntry extends DiaryEntry {
-    @DatabaseField
+public class BorrowDiaryEntry {
+    @DatabaseField(id=true, columnName = "borrowentry_id")
+    private Long borrowEntryId;
+    @DatabaseField(foreign = true)
     private Person borrowedFrom;
     @DatabaseField
     private double amount;
@@ -25,15 +27,25 @@ public class BorrowDiaryEntry extends DiaryEntry {
     public BorrowDiaryEntry(){
     }
 
-    public BorrowDiaryEntry(String entryTitle, String entryDescription, Timestamp entryCreatedOn,
-                            Timestamp entryLastUpdatedOn, double entryLocationLat,
+    public BorrowDiaryEntry(String entryTitle, String entryDescription, Date entryCreatedOn,
+                            Date entryLastUpdatedOn, double entryLocationLat,
                             double entryLocationLon, Person borrowedFrom, double amount,
                             Date borrowedOn, String narration) {
-        super(entryTitle, entryDescription, entryCreatedOn, entryLastUpdatedOn, entryLocationLat, entryLocationLon);
+        diaryEntry = new DiaryEntry(entryTitle, entryDescription, entryCreatedOn, entryLastUpdatedOn, entryLocationLat, entryLocationLon);
+        this.borrowEntryId = entryCreatedOn.getTime();
         this.borrowedFrom = borrowedFrom;
         this.amount = amount;
         this.borrowedOn = borrowedOn;
         this.narration = narration;
+    }
+
+    public long getBorrowEntryId() {
+        return borrowEntryId;
+    }
+
+    public void setBorrowEntryId(long borrowEntryId) {
+        this.borrowEntryId = borrowEntryId;
+        diaryEntry.setEntryId(borrowEntryId);
     }
 
     public Person getBorrowedFrom() {

@@ -1,6 +1,11 @@
 package com.sonu.diary.util;
 
+import org.joda.time.LocalDate;
+import org.joda.time.Years;
+
+
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,7 +18,8 @@ import java.util.Locale;
 public class DateUtils {
 
     private static Calendar calendar = null;
-    public static final String defaultPrintableDateFormat = "MM/dd/yyyy HH:mm:ss";
+    public static final String defaultTimestampFormat = "MM/dd/yyyy HH:mm:ss";
+    public static final String defaultDateFormat = "MM/dd/yyyy";
 
 
     private static void init(){
@@ -46,16 +52,16 @@ public class DateUtils {
     }
 
     public static String getStringTimeFromTimestamp(Timestamp ts){
-        return getStringDateFromTimestampInFormat(ts,defaultPrintableDateFormat).split(" ")[1];
+        return getStringDateFromTimestampInFormat(ts, defaultTimestampFormat).split(" ")[1];
     }
 
     private static String getTimeComponentFromTimestamp(Timestamp ts,int index){
-        String strDate = getStringDateFromTimestampInFormat(ts,defaultPrintableDateFormat).split(" ")[1];
+        String strDate = getStringDateFromTimestampInFormat(ts, defaultTimestampFormat).split(" ")[1];
         return strDate.split(":")[index];
     }
 
     private static String getDateComponentFromTimestamp(Timestamp ts, int index){
-        String strDate = getStringDateFromTimestampInFormat(ts,defaultPrintableDateFormat).split(" ")[0];
+        String strDate = getStringDateFromTimestampInFormat(ts, defaultTimestampFormat).split(" ")[0];
         return strDate.split("/")[index];
     }
 
@@ -82,5 +88,34 @@ public class DateUtils {
     public static int getSecondsFromTimestamp(Timestamp ts){
         return Integer.parseInt(getTimeComponentFromTimestamp(ts, 2));
     }
+
+    private static Date getDateFromStringInFormat(String strDate, String format){
+        Date date = null;
+        try {
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
+            date = dateFormatter.parse(strDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    public static Date getDateFromString(String strDate){
+        return getDateFromStringInFormat(strDate, defaultDateFormat);
+    }
+
+    public static Timestamp getTimestampFromString(String strDate){
+        Date date = getDateFromString(strDate);
+        return new Timestamp(date.getTime());
+    }
+
+
+    public static int calculateAge(Date birthDate) {
+        LocalDate bDate = new LocalDate(birthDate);
+        LocalDate now = new LocalDate(getCurrentTimestamp()); // test, in real world without args
+        Years age = Years.yearsBetween(bDate, now);
+        return age.getYears();
+    }
+
 
 }

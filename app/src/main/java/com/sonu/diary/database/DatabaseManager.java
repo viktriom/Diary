@@ -2,8 +2,6 @@ package com.sonu.diary.database;
 
 import android.content.Context;
 
-import com.sonu.diary.database.DatabaseHelper;
-
 public class DatabaseManager {
 
     static private DatabaseManager instance;

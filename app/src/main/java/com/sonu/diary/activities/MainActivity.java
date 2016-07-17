@@ -2,6 +2,7 @@ package com.sonu.diary.activities;
 
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -15,6 +16,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.sonu.diary.R;
+import com.sonu.diary.database.DatabaseHelper;
+import com.sonu.diary.database.DatabaseManager;
+import com.sonu.diary.domain.bean.Diary;
+import com.sonu.diary.domain.bean.Person;
+import com.sonu.diary.util.DateUtils;
+
+import java.sql.SQLException;
+
+import static com.sonu.diary.util.DateUtils.getCurrentYear;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -45,6 +55,13 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
+        //Database stuff
+        DatabaseManager.init(this.getApplicationContext());
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        DatabaseHelper dbHelper = dbManager.getHelper();
+        dbHelper.createTableForAllTheBeans();
+        dbHelper.truncateAllTables();
+        dbHelper.createDiaryForCurrentYear();
     }
 
     @Override

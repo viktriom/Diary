@@ -1,13 +1,11 @@
 package com.sonu.diary.util;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -47,8 +45,8 @@ public class DateUtilsTest {
 
     @Test
     public void testGetStringDateFromTimestampInFormat() throws Exception {
-        System.out.println("testGetStringDateFromTimestampInFormat:"+DateUtils.getStringDateFromTimestampInFormat(ts,DateUtils.defaultPrintableDateFormat));
-        assertEquals(DateUtils.getStringDateFromTimestampInFormat(ts, DateUtils.defaultPrintableDateFormat), "07/15/2016 13:25:15");
+        System.out.println("testGetStringDateFromTimestampInFormat:"+DateUtils.getStringDateFromTimestampInFormat(ts,DateUtils.defaultTimestampFormat));
+        assertEquals(DateUtils.getStringDateFromTimestampInFormat(ts, DateUtils.defaultTimestampFormat), "07/15/2016 13:25:15");
     }
 
     @Test

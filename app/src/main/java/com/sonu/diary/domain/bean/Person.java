@@ -2,15 +2,17 @@ package com.sonu.diary.domain.bean;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.sonu.diary.util.DateUtils;
 
-import java.sql.Date;
-import org.joda.time.DateTime;
+import java.util.Date;
 
 /**
  * Created by sonu on 11/07/16.
  */
 @DatabaseTable
 public class Person {
+    @DatabaseField(id = true,columnName = "person_id")
+    int personId;
     @DatabaseField
     private String initials;
     @DatabaseField
@@ -35,8 +37,9 @@ public class Person {
         this.dateOfBirth = dateOfBirth;
     }
 
-    private void computeAndSetAge(){
-        age = 0.0f;
+    public Person(int personId, String initials, String firstName, String lastName, String middleName, Date dateOfBirth) {
+        this(initials, firstName, lastName, middleName, dateOfBirth);
+        this.personId = personId;
     }
 
     public String getInitials() {
@@ -77,7 +80,7 @@ public class Person {
 
     public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
-        computeAndSetAge();
+        this.age = DateUtils.calculateAge(dateOfBirth);
     }
 
     public float getAge() {

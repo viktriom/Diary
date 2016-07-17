@@ -4,7 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,12 +13,17 @@ import java.util.List;
  */
 @DatabaseTable
 public class DiaryPage {
+
     @ForeignCollectionField(eager = true)
     private Collection<DiaryEntry> diaryEntry;
-    @DatabaseField
+    @DatabaseField(id = true)
     private Date pageDate;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Diary diary;
+
+    public DiaryPage(){
+
+    }
 
     public DiaryPage(List<DiaryEntry> diaryEntry, Date pageDate) {
         this.diaryEntry = diaryEntry;
@@ -39,5 +44,17 @@ public class DiaryPage {
 
     public void setPageDate(Date pageDate) {
         this.pageDate = pageDate;
+    }
+
+    public void setDiaryEntry(Collection<DiaryEntry> diaryEntry) {
+        this.diaryEntry = diaryEntry;
+    }
+
+    public Diary getDiary() {
+        return diary;
+    }
+
+    public void setDiary(Diary diary) {
+        this.diary = diary;
     }
 }

@@ -3,23 +3,24 @@ package com.sonu.diary.domain.bean;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.security.Timestamp;
-import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
  * Created by sonu on 11/07/16.
  */
-@DatabaseTable
+
 public class DiaryEntry {
+    @DatabaseField(id = true, columnName = "diaryentry_id")
+    private Long entryId;
     @DatabaseField
     private String entryTitle;
     @DatabaseField
     private String entryDescription;
     @DatabaseField
-    private Timestamp entryCreatedOn;
+    private Date entryCreatedOn;
     @DatabaseField
-    private Timestamp entryLastUpdatedOn;
+    private Date entryLastUpdatedOn;
     @DatabaseField
     private double entryLocationLat;
     @DatabaseField
@@ -33,8 +34,9 @@ public class DiaryEntry {
 
     }
 
-    public DiaryEntry(String entryTitle, String entryDescription, Timestamp entryCreatedOn,
-                      Timestamp entryLastUpdatedOn, double entryLocationLat, double entryLocationLon) {
+    public DiaryEntry(String entryTitle, String entryDescription, Date entryCreatedOn,
+                      Date entryLastUpdatedOn, double entryLocationLat, double entryLocationLon) {
+        this.entryId = entryCreatedOn.getTime();
         this.entryTitle = entryTitle;
         this.entryDescription = entryDescription;
         this.entryCreatedOn = entryCreatedOn;
@@ -59,19 +61,20 @@ public class DiaryEntry {
         this.entryDescription = entryDescription;
     }
 
-    public Timestamp getEntryCreatedOn() {
+    public Date getEntryCreatedOn() {
         return entryCreatedOn;
     }
 
-    public void setEntryCreatedOn(Timestamp entryCreatedOn) {
+    public void setEntryCreatedOn(Date entryCreatedOn) {
         this.entryCreatedOn = entryCreatedOn;
+        setEntryId(entryCreatedOn.getTime());
     }
 
-    public Timestamp getEntryLastUpdatedOn() {
+    public Date getEntryLastUpdatedOn() {
         return entryLastUpdatedOn;
     }
 
-    public void setEntryLastUpdatedOn(Timestamp entryLastUpdatedOn) {
+    public void setEntryLastUpdatedOn(Date entryLastUpdatedOn) {
         this.entryLastUpdatedOn = entryLastUpdatedOn;
     }
 
@@ -105,5 +108,13 @@ public class DiaryEntry {
 
     public void setDiaryPage(DiaryPage diaryPage) {
         this.diaryPage = diaryPage;
+    }
+
+    public Long getEntryId() {
+        return entryId;
+    }
+
+    public void setEntryId(Long entryId) {
+        this.entryId = entryId;
     }
 }

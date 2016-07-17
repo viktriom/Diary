@@ -3,15 +3,17 @@ package com.sonu.diary.domain.bean;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.security.Timestamp;
 import java.util.Date;
+
 
 /**
  * Created by sonu on 11/07/16.
  */
 @DatabaseTable
-public class LendDiaryEntry extends DiaryEntry{
-    @DatabaseField
+public class LendDiaryEntry {
+    @DatabaseField(id = true, columnName = "lenddiary_id")
+    private Long lendEntryId;
+    @DatabaseField(foreign = true)
     private Person lendTo;
     @DatabaseField
     private double lendAmount;
@@ -26,14 +28,24 @@ public class LendDiaryEntry extends DiaryEntry{
 
     }
 
-    public LendDiaryEntry(String entryTitle, String entryDescription, Timestamp entryCreatedOn,
-                          Timestamp entryLastUpdatedOn, double entryLocationLat, double entryLocationLon,
+    public LendDiaryEntry(String entryTitle, String entryDescription, Date entryCreatedOn,
+                          Date entryLastUpdatedOn, double entryLocationLat, double entryLocationLon,
                           Person lendTo, double lendAmount, Date lendOn, String narration) {
-        super(entryTitle, entryDescription, entryCreatedOn, entryLastUpdatedOn, entryLocationLat, entryLocationLon);
+        diaryEntry = new DiaryEntry(entryTitle, entryDescription, entryCreatedOn, entryLastUpdatedOn, entryLocationLat, entryLocationLon);
+        this.lendEntryId = entryCreatedOn.getTime();
         this.lendTo = lendTo;
         this.lendAmount = lendAmount;
         this.lendOn = lendOn;
         this.narration = narration;
+    }
+
+    public long getLendEntryId() {
+        return lendEntryId;
+    }
+
+    public void setLendEntryId(long lendEntryId) {
+        this.lendEntryId = lendEntryId;
+        this.diaryEntry.setEntryId(lendEntryId);
     }
 
     public Person getLendTo() {
