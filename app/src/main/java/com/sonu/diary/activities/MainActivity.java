@@ -2,7 +2,6 @@ package com.sonu.diary.activities;
 
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -14,20 +13,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 
 import com.sonu.diary.R;
 import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
-import com.sonu.diary.domain.bean.Diary;
-import com.sonu.diary.domain.bean.Person;
-import com.sonu.diary.util.DateUtils;
-
-import java.sql.SQLException;
-
-import static com.sonu.diary.util.DateUtils.getCurrentYear;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private boolean floatingMenuShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +34,10 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.common_plus_signin_btn_text_light)));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                handleFloatingMenu();
             }
         });
 
@@ -62,6 +57,52 @@ public class MainActivity extends AppCompatActivity
         dbHelper.createTableForAllTheBeans();
         dbHelper.truncateAllTables();
         dbHelper.createDiaryForCurrentYear();
+    }
+
+    private void handleFloatingMenu() {
+        FloatingActionButton fab1 = (FloatingActionButton)findViewById(R.id.fab_1);
+        FloatingActionButton fab2 = (FloatingActionButton)findViewById(R.id.fab_2);
+        FloatingActionButton fab3 = (FloatingActionButton)findViewById(R.id.fab_3);
+        Animation showFab1 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab1_show);
+        Animation hideFab1 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab1_hide);
+        Animation showFab2 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab2_show);
+        Animation hideFab2 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab2_hide);
+        Animation showFab3 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab3_show);
+        Animation hideFab3 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab3_hide);
+
+        assert fab1 != null;
+        assert fab2 != null;
+        assert fab3 != null;
+
+        if(!floatingMenuShown) {
+            showFloatingMenu(fab1, fab1.getWidth() * 1.7, fab1.getHeight() * 0.25, showFab1);
+            showFloatingMenu(fab2, fab1.getWidth() * 1.5, fab1.getHeight() * 1.5, showFab2);
+            showFloatingMenu(fab3, fab1.getWidth() * 0.25, fab1.getHeight() * 1.7, showFab3);
+            floatingMenuShown = true;
+        }else {
+            hideFloatingMenu(fab1, fab1.getWidth() * 1.7, fab1.getHeight() * 0.25, hideFab1);
+            hideFloatingMenu(fab2, fab1.getWidth() * 1.5, fab1.getHeight() * 1.5, hideFab2);
+            hideFloatingMenu(fab3, fab1.getWidth() * 0.25, fab1.getHeight() * 1.7, hideFab3);
+            floatingMenuShown = false;
+        }
+    }
+
+    private void showFloatingMenu(FloatingActionButton fab, double rightMargin, double leftMargin, Animation animation) {
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fab.getLayoutParams();
+        layoutParams.rightMargin += (int) (rightMargin);
+        layoutParams.bottomMargin += (int) (leftMargin);
+        fab.setLayoutParams(layoutParams);
+        fab.startAnimation(animation);
+        fab.setClickable(true);
+    }
+
+    private void hideFloatingMenu(FloatingActionButton fab, double rightMargin, double leftMargin, Animation animation) {
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fab.getLayoutParams();
+        layoutParams.rightMargin -= (int) (rightMargin);
+        layoutParams.bottomMargin -= (int) (leftMargin);
+        fab.setLayoutParams(layoutParams);
+        fab.startAnimation(animation);
+        fab.setClickable(false);
     }
 
     @Override
