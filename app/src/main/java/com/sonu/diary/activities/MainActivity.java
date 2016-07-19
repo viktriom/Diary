@@ -1,9 +1,7 @@
 package com.sonu.diary.activities;
 
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +18,8 @@ import android.widget.FrameLayout;
 import com.sonu.diary.R;
 import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
+import com.sonu.diary.util.cartesian.CartesianCoordinate;
+import com.sonu.diary.util.cartesian.CircularPlottingSystem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -63,28 +63,41 @@ public class MainActivity extends AppCompatActivity
         FloatingActionButton fab1 = (FloatingActionButton)findViewById(R.id.fab_1);
         FloatingActionButton fab2 = (FloatingActionButton)findViewById(R.id.fab_2);
         FloatingActionButton fab3 = (FloatingActionButton)findViewById(R.id.fab_3);
+        FloatingActionButton fab4 = (FloatingActionButton)findViewById(R.id.fab_4);
+        FloatingActionButton fab5 = (FloatingActionButton)findViewById(R.id.fab_5);
         Animation showFab1 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab1_show);
         Animation hideFab1 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab1_hide);
         Animation showFab2 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab2_show);
         Animation hideFab2 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab2_hide);
         Animation showFab3 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab3_show);
         Animation hideFab3 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab3_hide);
+        Animation showFab4 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab4_show);
+        Animation hideFab4 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab4_hide);
+        Animation showFab5 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab5_show);
+        Animation hideFab5 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab5_hide);
 
         assert fab1 != null;
         assert fab2 != null;
         assert fab3 != null;
+        assert fab4 != null;
+        assert fab5 != null;
+
+        CircularPlottingSystem ps = new CircularPlottingSystem(new CartesianCoordinate(0d,0d),3,4,90,180);
 
         if(!floatingMenuShown) {
-            showFloatingMenu(fab1, fab1.getWidth() * 1.7, fab1.getHeight() * 0.25, showFab1);
-            showFloatingMenu(fab2, fab1.getWidth() * 1.5, fab1.getHeight() * 1.5, showFab2);
-            showFloatingMenu(fab3, fab1.getWidth() * 0.25, fab1.getHeight() * 1.7, showFab3);
-            floatingMenuShown = true;
+            showFloatingMenu(fab1, fab1.getWidth() * ps.getAbsNthPoint(0).getY(), fab1.getHeight() * ps.getAbsNthPoint(0).getX(), showFab1);
+            showFloatingMenu(fab2, fab2.getWidth() * ps.getAbsNthPoint(1).getY(), fab2.getHeight() * ps.getAbsNthPoint(1).getX(), showFab2);
+            showFloatingMenu(fab3, fab3.getWidth() * ps.getAbsNthPoint(2).getY(), fab3.getHeight() * ps.getAbsNthPoint(2).getX(), showFab3);
+            showFloatingMenu(fab4, fab4.getWidth() * ps.getAbsNthPoint(3).getY(), fab4.getHeight() * ps.getAbsNthPoint(3).getX(), showFab4);
+            showFloatingMenu(fab5, fab5.getWidth() * ps.getAbsNthPoint(4).getY(), fab5.getHeight() * ps.getAbsNthPoint(4).getX(), showFab5);
         }else {
-            hideFloatingMenu(fab1, fab1.getWidth() * 1.7, fab1.getHeight() * 0.25, hideFab1);
-            hideFloatingMenu(fab2, fab1.getWidth() * 1.5, fab1.getHeight() * 1.5, hideFab2);
-            hideFloatingMenu(fab3, fab1.getWidth() * 0.25, fab1.getHeight() * 1.7, hideFab3);
-            floatingMenuShown = false;
+            hideFloatingMenu(fab1, fab1.getWidth() * ps.getAbsNthPoint(0).getY(), fab1.getHeight() * ps.getAbsNthPoint(0).getX(), hideFab1);
+            hideFloatingMenu(fab2, fab2.getWidth() * ps.getAbsNthPoint(1).getY(), fab2.getHeight() * ps.getAbsNthPoint(1).getX(), hideFab2);
+            hideFloatingMenu(fab3, fab3.getWidth() * ps.getAbsNthPoint(2).getY(), fab3.getHeight() * ps.getAbsNthPoint(2).getX(), hideFab3);
+            hideFloatingMenu(fab4, fab4.getWidth() * ps.getAbsNthPoint(3).getY(), fab4.getHeight() * ps.getAbsNthPoint(3).getX(), hideFab4);
+            hideFloatingMenu(fab5, fab5.getWidth() * ps.getAbsNthPoint(4).getY(), fab5.getHeight() * ps.getAbsNthPoint(4).getX(), hideFab5);
         }
+        floatingMenuShown = !floatingMenuShown;
     }
 
     private void showFloatingMenu(FloatingActionButton fab, double rightMargin, double leftMargin, Animation animation) {
