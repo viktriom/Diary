@@ -18,9 +18,9 @@ import java.util.Locale;
 public class DateUtils {
 
     private static Calendar calendar = null;
-    public static final String defaultTimestampFormat = "MM/dd/yyyy HH:mm:ss";
-    public static final String defaultDateFormat = "MM/dd/yyyy";
-
+    public static final String DEFAULT_TIMESTAMP_FORMAT = "dd/MMM/yyyy HH:mm:ss";
+    public static final String DEFAULT_DATE_FORMAT = "MM/dd/yyyy";
+    public static final String NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS = "ddMMyyyy";
 
     private static void init(){
         calendar = new GregorianCalendar();
@@ -52,16 +52,16 @@ public class DateUtils {
     }
 
     public static String getStringTimeFromTimestamp(Timestamp ts){
-        return getStringDateFromTimestampInFormat(ts, defaultTimestampFormat).split(" ")[1];
+        return getStringDateFromTimestampInFormat(ts, DEFAULT_TIMESTAMP_FORMAT).split(" ")[1];
     }
 
     private static String getTimeComponentFromTimestamp(Timestamp ts,int index){
-        String strDate = getStringDateFromTimestampInFormat(ts, defaultTimestampFormat).split(" ")[1];
+        String strDate = getStringDateFromTimestampInFormat(ts, DEFAULT_TIMESTAMP_FORMAT).split(" ")[1];
         return strDate.split(":")[index];
     }
 
     private static String getDateComponentFromTimestamp(Timestamp ts, int index){
-        String strDate = getStringDateFromTimestampInFormat(ts, defaultTimestampFormat).split(" ")[0];
+        String strDate = getStringDateFromTimestampInFormat(ts, DEFAULT_TIMESTAMP_FORMAT).split(" ")[0];
         return strDate.split("/")[index];
     }
 
@@ -101,7 +101,7 @@ public class DateUtils {
     }
 
     public static Date getDateFromString(String strDate){
-        return getDateFromStringInFormat(strDate, defaultDateFormat);
+        return getDateFromStringInFormat(strDate, DEFAULT_DATE_FORMAT);
     }
 
     public static Timestamp getTimestampFromString(String strDate){

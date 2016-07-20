@@ -1,5 +1,6 @@
 package com.sonu.diary.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
@@ -14,26 +15,45 @@ import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 
 import com.sonu.diary.R;
 import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
+import com.sonu.diary.database.DatabaseOperations;
+import com.sonu.diary.database.DatabaseOperationsImpl;
+import com.sonu.diary.domain.bean.DiaryEntry;
+import com.sonu.diary.domain.bean.DiaryPage;
+import com.sonu.diary.util.DateUtils;
 import com.sonu.diary.util.cartesian.CartesianCoordinate;
 import com.sonu.diary.util.cartesian.CircularPlottingSystem;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private boolean floatingMenuShown = false;
+    private ListView lstEntries;
+    private DatabaseOperations dbOpers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //initializeDbOperations();
+
+        initializeUI();
+
+    }
+
+    private void initializeUI() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,10 +70,28 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
-        //Database stuff
+
+        lstEntries = (ListView) findViewById(R.id.lstEntries);
+        dbOpers = new DatabaseOperationsImpl(this.getApplicationContext());
+
+        populateListViewWithEntries();
+
+    }
+
+    private void populateListViewWithEntries() {
+        DiaryPage diaryPage = (DiaryPage) dbOpers.findById(DiaryPage.class, Long.parseLong(
+                DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(),
+                        DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS)));
+        assert null != diaryPage;
+        //List<DiaryEntry> deList = (List<DiaryEntry>)diaryPage.getDiaryEntry();
+
+    }
+
+    private void initializeDbOperations() {
         DatabaseManager.init(this.getApplicationContext());
         DatabaseManager dbManager = DatabaseManager.getInstance();
         DatabaseHelper dbHelper = dbManager.getHelper();
+        dbHelper.dropAllTables();
         dbHelper.createTableForAllTheBeans();
         dbHelper.truncateAllTables();
         dbHelper.createDiaryForCurrentYear();
@@ -97,7 +135,7 @@ public class MainActivity extends AppCompatActivity
             hideFloatingMenu(fab4, fab4.getWidth() * ps.getAbsNthPoint(3).getY(), fab4.getHeight() * ps.getAbsNthPoint(3).getX(), hideFab4);
             hideFloatingMenu(fab5, fab5.getWidth() * ps.getAbsNthPoint(4).getY(), fab5.getHeight() * ps.getAbsNthPoint(4).getX(), hideFab5);
         }
-        floatingMenuShown = !floatingMenuShown;
+
     }
 
     private void showFloatingMenu(FloatingActionButton fab, double rightMargin, double leftMargin, Animation animation) {
@@ -107,6 +145,7 @@ public class MainActivity extends AppCompatActivity
         fab.setLayoutParams(layoutParams);
         fab.startAnimation(animation);
         fab.setClickable(true);
+        floatingMenuShown = true;
     }
 
     private void hideFloatingMenu(FloatingActionButton fab, double rightMargin, double leftMargin, Animation animation) {
@@ -116,6 +155,7 @@ public class MainActivity extends AppCompatActivity
         fab.setLayoutParams(layoutParams);
         fab.startAnimation(animation);
         fab.setClickable(false);
+        floatingMenuShown = false;
     }
 
     @Override
@@ -173,5 +213,11 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void showGeneralEntry(View view){
+        Intent intent = new Intent(this, GeneralEntry.class);
+        handleFloatingMenu();
+        startActivity(intent);
     }
 }

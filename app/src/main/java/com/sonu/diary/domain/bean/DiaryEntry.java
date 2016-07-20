@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by sonu on 11/07/16.
  */
-
+@DatabaseTable
 public class DiaryEntry {
     @DatabaseField(id = true, columnName = "diaryentry_id")
     private Long entryId;
@@ -25,6 +25,8 @@ public class DiaryEntry {
     private double entryLocationLat;
     @DatabaseField
     private double entryLocationLon;
+    @DatabaseField
+    private String location;
     @DatabaseField
     private int securityClearanceLevel;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
@@ -116,5 +118,13 @@ public class DiaryEntry {
 
     public void setEntryId(Long entryId) {
         this.entryId = entryId;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

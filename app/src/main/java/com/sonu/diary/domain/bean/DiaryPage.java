@@ -16,7 +16,9 @@ public class DiaryPage {
 
     @ForeignCollectionField(eager = true)
     private Collection<DiaryEntry> diaryEntry;
-    @DatabaseField(id = true)
+    @DatabaseField(id = true, columnName = "diaryapage_id")
+    private long pageId;
+    @DatabaseField
     private Date pageDate;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Diary diary;
@@ -25,9 +27,11 @@ public class DiaryPage {
 
     }
 
-    public DiaryPage(List<DiaryEntry> diaryEntry, Date pageDate) {
+    public DiaryPage(List<DiaryEntry> diaryEntry, Date pageDate, long pageId, Diary diary) {
         this.diaryEntry = diaryEntry;
         this.pageDate = pageDate;
+        this.pageId = pageId;
+        this.diary = diary;
     }
 
     public Collection<DiaryEntry> getDiaryEntry() {
@@ -56,5 +60,13 @@ public class DiaryPage {
 
     public void setDiary(Diary diary) {
         this.diary = diary;
+    }
+
+    public long getPageId() {
+        return pageId;
+    }
+
+    public void setPageId(long pageId) {
+        this.pageId = pageId;
     }
 }

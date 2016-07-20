@@ -2,6 +2,10 @@ package com.sonu.diary.database;
 
 import android.content.Context;
 
+import com.sonu.diary.domain.bean.DiaryPage;
+import com.sonu.diary.util.DateUtils;
+
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -17,7 +21,13 @@ public class DatabaseOperationsImpl implements DatabaseOperations {
     }
 
     @Override
-    public int create(Object item) {
+    public int create(Class cls, Object item) {
+
+        try {
+            dbHelper.getDao(cls).create(item);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return 0;
     }
 
@@ -32,9 +42,38 @@ public class DatabaseOperationsImpl implements DatabaseOperations {
     }
 
     @Override
-    public Object findById(int id) {
-        return null;
+    public Object findById(Class cls, int id) {
+        Object obj = null;
+        try {
+            obj =  dbHelper.getDao(cls).queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return obj;
     }
+
+    @Override
+    public Object findById(Class cls, long id) {
+        Object obj = null;
+        try {
+            obj =  DatabaseManager.getInstance().getHelper().getDao(cls).queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+
+    @Override
+    public Object findById(Class cls, String id) {
+        Object obj = null;
+        try {
+            obj =  DatabaseManager.getInstance().getHelper().getDao(cls).queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+
 
     @Override
     public List<?> findAll() {

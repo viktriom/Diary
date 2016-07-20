@@ -45,8 +45,9 @@ public class DateUtilsTest {
 
     @Test
     public void testGetStringDateFromTimestampInFormat() throws Exception {
-        System.out.println("testGetStringDateFromTimestampInFormat:"+DateUtils.getStringDateFromTimestampInFormat(ts,DateUtils.defaultTimestampFormat));
-        assertEquals(DateUtils.getStringDateFromTimestampInFormat(ts, DateUtils.defaultTimestampFormat), "07/15/2016 13:25:15");
+        System.out.println("testGetStringDateFromTimestampInFormat:"+DateUtils.getStringDateFromTimestampInFormat(ts,DateUtils.DEFAULT_TIMESTAMP_FORMAT));
+        assertEquals(DateUtils.getStringDateFromTimestampInFormat(ts, DateUtils.DEFAULT_TIMESTAMP_FORMAT), "15/Jul/2016 13:25:15");
+        assertEquals(DateUtils.getStringDateFromTimestampInFormat(ts, DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS), "15072016");
     }
 
     @Test

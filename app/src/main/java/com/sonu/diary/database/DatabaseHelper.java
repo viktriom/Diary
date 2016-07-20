@@ -1,7 +1,10 @@
 package com.sonu.diary.database;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
@@ -101,6 +104,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             Dao<Person,Integer> personDao = getDao(Person.class);
             Dao<Diary, Integer> diaryDao = getDao(Diary.class);
+            Dao<DiaryPage, Long> diaryPageDao = getDao(DiaryPage.class);
             long recCount = personDao.countOf();
             Person person = null;
             if(recCount == 0){
@@ -113,12 +117,22 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             recCount = diaryDao.countOf();
             if(recCount == 0){
                  if(null == diaryDao.queryForId(DateUtils.getCurrentYear())) {
-                    Diary diary = null;
-                    diary = new Diary();
-                    diary.setYear(getCurrentYear());
-                    diary.setDiaryPages(null);
-                    diary.setOwner(person);
-                    diaryDao.create(diary);
+                     List<DiaryPage> diaryPageList = new LinkedList<>();
+                     DiaryPage diaryPage = new DiaryPage();
+                     Diary diary = new Diary();
+                     diaryPage.setPageId(Long.parseLong(
+                                     DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(),
+                                             DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS))
+                     );
+                     diaryPage.setPageDate(new Date(DateUtils.getCurrentTimestamp().getTime()));
+                     diaryPage.setDiaryEntry(null);
+                     diary.setYear(getCurrentYear());
+                     diary.setOwner(person);
+                     diaryPage.setDiary(diary);
+                     diaryPageList.add(diaryPage);
+                     diary.setDiaryPages(diaryPageList);
+                     diaryDao.create(diary);
+                     diaryPageDao.create(diaryPage);
                 }
             }
         } catch (SQLException e) {

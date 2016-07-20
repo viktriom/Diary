@@ -13,7 +13,7 @@ import java.util.List;
 
 @DatabaseTable
 public class Diary {
-    @DatabaseField(id = true)
+    @DatabaseField(id = true, columnName = "diary_id")
     private Integer year;
     @DatabaseField (foreign = true, foreignAutoRefresh = true)
     private Person owner;
