@@ -13,9 +13,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
         android:id="@+id/lblCreationTime"
-        android:layout_alignParentTop="true"
+        android:textSize="10sp"
+        android:layout_alignTop="@+id/lblHeading"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -25,24 +25,25 @@
         android:text="General Entry"
         android:id="@+id/lblHeading"
         android:layout_centerHorizontal="true"
-        android:layout_alignBottom="@+id/lblCreationTime" />
+        android:layout_above="@+id/lblLastModifiedOn" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/lblLastModifiedOn"
-        android:text="Small Text"
-        android:layout_below="@+id/lblHeading"
+        android:text="Modified:"
+        android:textSize="10sp"
+        android:layout_alignBottom="@+id/btnSave"
         android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtEntryTitle"
-        android:layout_below="@+id/lblLastModifiedOn"
-        android:layout_alignParentStart="true"
-        android:text="Entry Title" />
+        android:hint="Title"
+        android:layout_below="@+id/btnSave"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -50,7 +51,7 @@
         android:id="@+id/txtEntryLocation"
         android:layout_alignTop="@+id/txtEntryTitle"
         android:layout_alignParentEnd="true"
-        android:text="Location" />
+        android:hint="Location" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -60,7 +61,17 @@
         android:id="@+id/txtGeneralEntryDetail"
         android:layout_below="@+id/txtEntryTitle"
         android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
+        android:layout_marginTop="31dp"
         android:layout_alignEnd="@+id/txtEntryLocation" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/btnSave"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="saveGeneralEntry"/>
 
 </RelativeLayout>

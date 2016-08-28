@@ -56,7 +56,9 @@ public class GeneralEntry extends AppCompatActivity {
 
     public void saveGeneralEntry(View view){
         Log.i(GeneralEntry.class.getName(), "Populating the DiaryEntry bean.");
-        DiaryPage currentPage = (DiaryPage)dbOpers.findById(DiaryPage.class,DateUtils.getCurrentYear());
+        DiaryPage currentPage = (DiaryPage)dbOpers.findById(DiaryPage.class,Long.parseLong(
+                DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(),
+                        DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS)));
 
         de.setDiaryPage(currentPage);
         de.setEntryDescription(entryDescription.getText().toString());
@@ -65,31 +67,28 @@ public class GeneralEntry extends AppCompatActivity {
         if(verifyDataIntegrity()) {
             Log.i(GeneralEntry.class.getName(), "Saving the generic Entry.");
             dbOpers.create(DiaryEntry.class, de);
+            finish();
         }else{
             Log.i(GeneralEntry.class.getName(), "Data Validation on the entered data failed.");
         }
     }
 
     private boolean verifyDataIntegrity() {
-        boolean isDataValid = true;
         if(de.getEntryId() == null || de.getEntryId() < 0){
-            isDataValid = false;
+            return false;
         }
         if(de.getEntryCreatedOn() == null || de.getEntryLastUpdatedOn() == null){
-            isDataValid = false;
+            return false;
         }
         if(de.getDiaryPage() == null) {
-            isDataValid = false;
+            return false;
         }
         if(de.getEntryDescription() == null || de.getEntryDescription().isEmpty()) {
-            isDataValid = false;
+            return false;
         }
         if(de.getEntryTitle() == null || de.getEntryTitle().isEmpty()) {
-            isDataValid = false;
+            return false;
         }
-        if(de.getLocation() == null || de.getLocation().isEmpty()){
-            isDataValid = false;
-        }
-        return isDataValid;
+        return !(de.getLocation() == null || de.getLocation().isEmpty());
     }
 }
