@@ -220,4 +220,10 @@ public class MainActivity extends AppCompatActivity
         handleFloatingMenu();
         startActivity(intent);
     }
+
+    public void showRoutineEntry(View view) {
+        Intent intent = new Intent(this, RoutineActivity.class);
+        handleFloatingMenu();
+        startActivity(intent);
+    }
 }

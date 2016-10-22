@@ -9,4 +9,94 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.sonu.diary.activities.RoutineActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/roster_entry"
+        android:id="@+id/lblRosterHeading"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="105dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Fill out the following fields to create a new roster entry."
+        android:id="@+id/lblDescription"
+        android:layout_below="@+id/lblRosterHeading"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="32dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtRoutineTitle"
+        android:layout_below="@+id/lblDescription"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="49dp"
+        android:layout_alignEnd="@+id/txtStartTime" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtStartTime"
+        android:layout_below="@+id/txtRoutineTitle"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="39dp"
+        android:hint="Routine Titile"
+        android:layout_alignEnd="@+id/txtEndTime" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtEndTime"
+        android:layout_below="@+id/txtStartTime"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="46dp"
+        android:hint="Routitne Start Time"
+        android:layout_alignEnd="@+id/txtFrequency" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtFrequency"
+        android:layout_below="@+id/txtEndTime"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="46dp"
+        android:hint="Routine End Time"
+        android:layout_alignEnd="@+id/txtSchedule" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtSchedule"
+        android:layout_below="@+id/txtFrequency"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="39dp"
+        android:hint="Routine Frequency"
+        android:layout_alignEnd="@+id/editText5" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText5"
+        android:layout_below="@+id/txtSchedule"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="41dp"
+        android:hint="Routine Schedule"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/btnSave"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="saveRoutineEntry"
+        />
+
 </RelativeLayout>

@@ -24,6 +24,7 @@
         android:src="@android:drawable/ic_menu_myplaces"
         android:visibility="invisible"
         app:backgroundTint="@color/colorPrimary"
+        android:onClick="showRoutineEntry"
         app:fabSize="mini" />
 
     <android.support.design.widget.FloatingActionButton

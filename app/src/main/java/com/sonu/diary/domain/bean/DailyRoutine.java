@@ -9,5 +9,11 @@ public class DailyRoutine {
 
     List<RoutineTask> routineTasks;
 
+    public List<RoutineTask> getRoutineTasks() {
+        return routineTasks;
+    }
 
+    public void setRoutineTasks(List<RoutineTask> routineTasks) {
+        this.routineTasks = routineTasks;
+    }
 }
