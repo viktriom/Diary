@@ -22,13 +22,14 @@ import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
 import com.sonu.diary.database.DatabaseOperations;
 import com.sonu.diary.database.DatabaseOperationsImpl;
-import com.sonu.diary.domain.bean.DiaryEntry;
 import com.sonu.diary.domain.bean.DiaryPage;
+import com.sonu.diary.handers.ui.DashboardUIHandler;
 import com.sonu.diary.util.DateUtils;
 import com.sonu.diary.util.cartesian.CartesianCoordinate;
 import com.sonu.diary.util.cartesian.CircularPlottingSystem;
 
-import java.util.List;
+import java.sql.SQLException;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -190,7 +191,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressWarnings("Stateme  ntWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -198,8 +199,14 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camara) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
+        } else if (id == R.id.nav_routine) {
+            //showRoutineEntry(item.getActionView());
+            DashboardUIHandler dashboardUIHandler = new DashboardUIHandler();
+            try {
+                dashboardUIHandler.displayAllEntriesForToday(new Date(DateUtils.getCurrentTimestamp().getTime()), this);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -222,8 +229,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showRoutineEntry(View view) {
-        Intent intent = new Intent(this, RoutineActivity.class);
-        handleFloatingMenu();
-        startActivity(intent);
+        //Intent intent = new Intent(this, RoutineActivity.class);
+        //startActivity(intent);
+        DashboardUIHandler dashboardUIHandler = new DashboardUIHandler();
+        try {
+            dashboardUIHandler.displayAllEntriesForToday(new Date(DateUtils.getCurrentTimestamp().getTime()), this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

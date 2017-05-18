@@ -64,7 +64,7 @@ public class GeneralEntry extends AppCompatActivity {
         de.setEntryDescription(entryDescription.getText().toString());
         de.setEntryTitle(entryTitle.getText().toString());
         de.setLocation(entryLocation.getText().toString());
-        if(verifyDataIntegrity()) {
+        if(validationPassed()) {
             Log.i(GeneralEntry.class.getName(), "Saving the generic Entry.");
             dbOpers.create(DiaryEntry.class, de);
             finish();
@@ -73,7 +73,7 @@ public class GeneralEntry extends AppCompatActivity {
         }
     }
 
-    private boolean verifyDataIntegrity() {
+    private boolean validationPassed() {
         if(de.getEntryId() == null || de.getEntryId() < 0){
             return false;
         }
