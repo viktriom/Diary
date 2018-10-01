@@ -18,7 +18,7 @@ import java.util.Locale;
 public class DateUtils {
 
     private static Calendar calendar = null;
-    public static final String DEFAULT_TIMESTAMP_FORMAT = "dd/MMM/yyyy HH:mm:ss";
+    public static final String DEFAULT_TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss";
     public static final String DEFAULT_DATE_FORMAT = "MM/dd/yyyy";
     public static final String NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS = "ddMMyyyy";
 
@@ -66,7 +66,7 @@ public class DateUtils {
     }
 
     public static int getDayOfMonthFromTimestamp(Timestamp ts){
-        return Integer.parseInt(getDateComponentFromTimestamp(ts, 1));
+        return Integer.parseInt(getDateComponentFromTimestamp(ts, 0));
     }
 
     public static int getYearFromTimestamp(Timestamp ts){
@@ -74,7 +74,7 @@ public class DateUtils {
     }
 
     public static int getMonthFromTimestamp(Timestamp ts){
-        return Integer.parseInt(getDateComponentFromTimestamp(ts, 0));
+        return Integer.parseInt(getDateComponentFromTimestamp(ts, 1));
     }
 
     public static int getHoursFromTimestamp(Timestamp ts){
@@ -98,6 +98,18 @@ public class DateUtils {
             e.printStackTrace();
         }
         return date;
+    }
+
+    public static Timestamp getTimestampFromStringInFormat(String strDate, String format){
+        Date date = null;
+        try {
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
+            date = dateFormatter.parse(strDate);
+            return new Timestamp(date.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static Date getDateFromString(String strDate){

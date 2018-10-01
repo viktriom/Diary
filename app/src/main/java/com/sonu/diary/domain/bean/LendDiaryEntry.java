@@ -3,6 +3,8 @@ package com.sonu.diary.domain.bean;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Date;
 
 
@@ -28,10 +30,10 @@ public class LendDiaryEntry {
 
     }
 
-    public LendDiaryEntry(String entryTitle, String entryDescription, Date entryCreatedOn,
-                          Date entryLastUpdatedOn, double entryLocationLat, double entryLocationLon,
+    public LendDiaryEntry(String entryTitle, String entryDescription, Timestamp entryCreatedOn,
+                          Timestamp entryLastUpdatedOn, Timestamp entryActionTime,  double entryLocationLat, double entryLocationLon,
                           Person lendTo, double lendAmount, Date lendOn, String narration) {
-        diaryEntry = new DiaryEntry(entryTitle, entryDescription, entryCreatedOn, entryLastUpdatedOn, entryLocationLat, entryLocationLon);
+        diaryEntry = new DiaryEntry(entryTitle, entryDescription, entryCreatedOn, entryLastUpdatedOn, entryActionTime, entryLocationLat, entryLocationLon);
         this.lendEntryId = entryCreatedOn.getTime();
         this.lendTo = lendTo;
         this.lendAmount = lendAmount;

@@ -17,7 +17,6 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableUtils;
-import com.sonu.diary.domain.bean.BorrowDiaryEntry;
 import com.sonu.diary.domain.bean.ConfidentialDiaryEntry;
 import com.sonu.diary.domain.bean.Diary;
 import com.sonu.diary.domain.bean.DiaryEntry;
@@ -45,7 +44,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    private Class[] dbMappedClassList = {BorrowDiaryEntry.class, ConfidentialDiaryEntry.class, Diary.class,
+    private Class[] dbMappedClassList = {ConfidentialDiaryEntry.class, Diary.class,
             DiaryEntry.class, DiaryPage.class, ExpenditureDiaryEntry.class,
             IdeaDiaryEntry.class, LendDiaryEntry.class, Person.class };
 
@@ -80,7 +79,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     TableUtils.dropTable(connectionSource, cls, true);
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    Log.e(DatabaseHelper.class.getName(), "Table creation for bean " + cls + "UNSUCCESSFUL due to error : " + e.getMessage());
+                    Log.e(DatabaseHelper.class.getName(), "Drop table for bean :  " + cls + " UNSUCCESSFUL due to error : " + e.getMessage());
                 }
             }
         }

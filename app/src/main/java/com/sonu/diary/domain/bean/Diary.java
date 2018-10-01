@@ -11,7 +11,7 @@ import java.util.List;
  * Created by sonu on 11/07/16.
  */
 
-@DatabaseTable
+@DatabaseTable(tableName = "diary")
 public class Diary {
     @DatabaseField(id = true, columnName = "diary_id")
     private Integer year;

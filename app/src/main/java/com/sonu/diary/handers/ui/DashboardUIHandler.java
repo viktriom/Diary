@@ -31,7 +31,7 @@ public class DashboardUIHandler extends ListActivity{
 
     public void displayAllEntriesForToday(Date date, AppCompatActivity dashboardUI) throws SQLException {
         List<DiaryEntry> diaryEntries = DatabaseManager.getInstance().getHelper().getDao(DiaryEntry.class).queryForAll();
-        TableLayout tableLayout = (TableLayout) dashboardUI.findViewById(R.id.dashboard);
+        //TableLayout tableLayout = (TableLayout) dashboardUI.findViewById(R.id.dashboard);
         for(DiaryEntry entry : diaryEntries) {
             TableRow tableRow = new TableRow(dashboardUI);
             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
@@ -45,7 +45,7 @@ public class DashboardUIHandler extends ListActivity{
             tableRow.addView(title);
             tableRow.addView(desc);
             tableRow.addView(exp);
-            tableLayout.addView(tableRow);
+            //tableLayout.addView(tableRow);
 
             listItems.add(entry.toString());
         }

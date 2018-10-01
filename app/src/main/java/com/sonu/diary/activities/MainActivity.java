@@ -14,15 +14,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.sonu.diary.R;
+import com.sonu.diary.adapters.DiaryEntryAdapter;
 import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
 import com.sonu.diary.database.DatabaseOperations;
-import com.sonu.diary.database.DatabaseOperationsImpl;
-import com.sonu.diary.domain.bean.DiaryPage;
 import com.sonu.diary.handers.ui.DashboardUIHandler;
 import com.sonu.diary.util.DateUtils;
 import com.sonu.diary.util.cartesian.CartesianCoordinate;
@@ -31,12 +32,14 @@ import com.sonu.diary.util.cartesian.CircularPlottingSystem;
 import java.sql.SQLException;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity
+
+public class MainActivity extends AbstractActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private boolean floatingMenuShown = false;
     private ListView lstEntries;
-    private DatabaseOperations dbOpers;
+    private DiaryEntryAdapter adapter;
+    private TextView pageDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +47,30 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         initializeDbOperations();
-
         initializeUI();
+
+        adapter = new DiaryEntryAdapter(MainActivity.this);
+
+        lstEntries.setAdapter(adapter);
+
+        lstEntries.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+                final String item = (String) parent.getItemAtPosition(position);
+                view.animate().setDuration(2000).alpha(0)
+                        .withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                                view.setAlpha(1);
+                            }
+                        });
+            }
+
+        });
+
 
     }
 
@@ -73,20 +98,12 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         lstEntries = (ListView) findViewById(R.id.lstEntries);
-        dbOpers = new DatabaseOperationsImpl(this.getApplicationContext());
 
-        populateListViewWithEntries();
-
-    }
-
-    private void populateListViewWithEntries() {
-        DiaryPage diaryPage = (DiaryPage) dbOpers.findById(DiaryPage.class, Long.parseLong(
-                DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(),
-                        DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS)));
-        assert null != diaryPage;
-        //List<DiaryEntry> deList = (List<DiaryEntry>)diaryPage.getDiaryEntry();
+        pageDate = (TextView)findViewById(R.id.txtViewPageDate);
+        pageDate.setText(DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(), DateUtils.DEFAULT_DATE_FORMAT));
 
     }
+
 
     private void initializeDbOperations() {
         DatabaseManager.init(this.getApplicationContext());

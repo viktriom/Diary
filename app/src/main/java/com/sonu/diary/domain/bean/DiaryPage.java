@@ -69,4 +69,5 @@ public class DiaryPage {
     public void setPageId(long pageId) {
         this.pageId = pageId;
     }
+
 }

@@ -4,7 +4,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  * Created by sonu on 11/07/16.
@@ -18,9 +17,11 @@ public class DiaryEntry {
     @DatabaseField
     private String entryDescription;
     @DatabaseField
-    private Date entryCreatedOn;
+    private Timestamp entryCreatedOn;
     @DatabaseField
-    private Date entryLastUpdatedOn;
+    private Timestamp entryLastUpdatedOn;
+    @DatabaseField
+    private Timestamp entryActionTime;
     @DatabaseField
     private double entryLocationLat;
     @DatabaseField
@@ -36,13 +37,14 @@ public class DiaryEntry {
 
     }
 
-    public DiaryEntry(String entryTitle, String entryDescription, Date entryCreatedOn,
-                      Date entryLastUpdatedOn, double entryLocationLat, double entryLocationLon) {
+    public DiaryEntry(String entryTitle, String entryDescription, Timestamp entryCreatedOn,
+                      Timestamp entryLastUpdatedOn,Timestamp entryActionTime, double entryLocationLat, double entryLocationLon) {
         this.entryId = entryCreatedOn.getTime();
         this.entryTitle = entryTitle;
         this.entryDescription = entryDescription;
         this.entryCreatedOn = entryCreatedOn;
         this.entryLastUpdatedOn = entryLastUpdatedOn;
+        this.entryActionTime = entryActionTime;
         this.entryLocationLat = entryLocationLat;
         this.entryLocationLon = entryLocationLon;
     }
@@ -63,21 +65,29 @@ public class DiaryEntry {
         this.entryDescription = entryDescription;
     }
 
-    public Date getEntryCreatedOn() {
+    public Timestamp getEntryCreatedOn() {
         return entryCreatedOn;
     }
 
-    public void setEntryCreatedOn(Date entryCreatedOn) {
+    public void setEntryCreatedOn(Timestamp entryCreatedOn) {
         this.entryCreatedOn = entryCreatedOn;
         setEntryId(entryCreatedOn.getTime());
     }
 
-    public Date getEntryLastUpdatedOn() {
+    public Timestamp getEntryLastUpdatedOn() {
         return entryLastUpdatedOn;
     }
 
-    public void setEntryLastUpdatedOn(Date entryLastUpdatedOn) {
+    public void setEntryLastUpdatedOn(Timestamp entryLastUpdatedOn) {
         this.entryLastUpdatedOn = entryLastUpdatedOn;
+    }
+
+    public Timestamp getEntryActionTime() {
+        return entryActionTime;
+    }
+
+    public void setEntryActionTime(Timestamp entryActionTime) {
+        this.entryActionTime = entryActionTime;
     }
 
     public double getEntryLocationLat() {

@@ -54,15 +54,15 @@
         android:hint="Location" />
 
     <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
         android:id="@+id/txtGeneralEntryDetail"
-        android:layout_below="@+id/txtEntryTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="258dp"
+        android:layout_alignEnd="@+id/txtEntryLocation"
         android:layout_alignParentStart="true"
+        android:layout_below="@+id/txtEntryTitle"
         android:layout_marginTop="31dp"
-        android:layout_alignEnd="@+id/txtEntryLocation" />
+        android:ems="10"
+        android:inputType="textMultiLine" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -73,5 +73,21 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:onClick="saveGeneralEntry"/>
+
+    <TextView
+        android:id="@+id/txtEntryActionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtGeneralEntryDetail"
+        android:layout_alignParentLeft="true"
+        android:text="Entry Action Time:" />
+    <TextView
+        android:id="@+id/txtEntryActionTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/txtGeneralEntryDetail"
+        android:onClick="showPicker"
+        android:text="dd/mmm/yyyy hh:mm:ss" />
 
 </RelativeLayout>

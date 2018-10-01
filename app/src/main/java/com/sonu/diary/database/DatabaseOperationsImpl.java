@@ -2,10 +2,12 @@ package com.sonu.diary.database;
 
 import android.content.Context;
 
+import com.sonu.diary.domain.bean.DiaryEntry;
 import com.sonu.diary.domain.bean.DiaryPage;
 import com.sonu.diary.util.DateUtils;
 
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -76,7 +78,13 @@ public class DatabaseOperationsImpl implements DatabaseOperations {
 
 
     @Override
-    public List<?> findAll() {
-        return null;
+    public List<Object> findAll(Class cls) {
+        List<Object> lst = new LinkedList<>();
+        try {
+            lst = DatabaseManager.getInstance().getHelper().getDao(cls).queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lst;
     }
 }

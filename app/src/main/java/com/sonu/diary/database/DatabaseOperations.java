@@ -12,5 +12,5 @@ public interface DatabaseOperations {
     Object findById(Class cls, int id);
     Object findById(Class cls, long id);
     Object findById(Class cls, String id);
-    List<?> findAll();
+    List<?> findAll(Class cls);
 }
