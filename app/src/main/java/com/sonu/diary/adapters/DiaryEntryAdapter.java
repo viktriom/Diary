@@ -38,27 +38,33 @@ public class DiaryEntryAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        DiaryEntry de = DiaryCache.getDiaryEntries().get(position);
+        DiaryEntry de = DiaryCache.getDiaryEntry(position);
 
         LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if( null == convertView) {
             assert vi != null;
             convertView = vi.inflate(R.layout.list_item_diary_entry, null);
-            TextView txtDescription = (TextView) convertView.findViewById(R.id.description);
-            TextView txtTitle = (TextView) convertView.findViewById(R.id.deTitle);
-            TextView txtCreationTime = (TextView) convertView.findViewById(R.id.creationTime);
-            txtDescription.setText(de.getEntryDescription());
-            txtTitle.setText(de.getEntryTitle());
-            txtCreationTime.setText(DateUtils.getStringTimeFromTimestamp(de.getEntryActionTime()));
+            populateViewFields(convertView, de);
         } else {
-            TextView txtDescription = (TextView) convertView.findViewById(R.id.description);
-            TextView txtTitle = (TextView) convertView.findViewById(R.id.deTitle);
-            TextView txtCreationTime = (TextView) convertView.findViewById(R.id.creationTime);
-            txtDescription.setText(de.getEntryDescription());
-            txtTitle.setText(de.getEntryTitle());
-            txtCreationTime.setText(DateUtils.getStringTimeFromTimestamp(de.getEntryActionTime()));
+            populateViewFields(convertView, de);
         }
         return convertView;
+    }
+
+    private void populateViewFields(View convertView, DiaryEntry de){
+        TextView txtDescription = (TextView) convertView.findViewById(R.id.description);
+        TextView txtTitle = (TextView) convertView.findViewById(R.id.deTitle);
+        TextView txtCreationTime = (TextView) convertView.findViewById(R.id.creationTime);
+        txtDescription.setText(de.getEntryDescription());
+        txtTitle.setText(de.getEntryTitle());
+        txtCreationTime.setText("[" + DateUtils.getStringTimeFromTimestamp(de.getEntryActionTime()) + "]:");
+        if(de.isExpenseAdded()){
+            TextView expense = (TextView)convertView.findViewById(R.id.deExpense);
+            String sb = de.getEntryExpenditureSource() +
+                    ":₹" +
+                    String.valueOf(de.getEntryExpenditure());
+            expense.setText(sb);
+        }
     }
 }

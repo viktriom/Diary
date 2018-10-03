@@ -3,6 +3,8 @@ package com.sonu.diary.caches;
 import android.content.Context;
 import android.util.Log;
 
+import com.sonu.diary.activities.MainActivity;
+import com.sonu.diary.adapters.DiaryEntryAdapter;
 import com.sonu.diary.database.DatabaseOperations;
 import com.sonu.diary.database.DatabaseOperationsImpl;
 import com.sonu.diary.domain.bean.DiaryEntry;
@@ -36,7 +38,7 @@ public class DiaryCache {
     }
 
     public static DiaryEntry getDiaryEntry(int index){
-        List<DiaryEntry> sortedList = diaryEntries.stream().sorted((t1, t2) -> (t1.getEntryActionTime().compareTo(t2.getEntryActionTime()))).collect(Collectors.toList());
+        List<DiaryEntry> sortedList = diaryEntries.stream().sorted((t1, t2) -> (t2.getEntryActionTime().compareTo(t1.getEntryActionTime()))).collect(Collectors.toList());
         return sortedList.get(index);
     }
 
@@ -44,5 +46,8 @@ public class DiaryCache {
         return diaryEntries;
     }
 
+    public static int getTotalExpenseForToday(){
+        return diaryEntries.stream().filter(DiaryEntry::isExpenseAdded).map(DiaryEntry::getEntryExpenditure).reduce(0, (t1,t2)->t1+t2);
+    }
 
 }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.sonu.diary.R;
@@ -12,6 +13,7 @@ import com.sonu.diary.database.DatabaseOperations;
 import com.sonu.diary.database.DatabaseOperationsImpl;
 import com.sonu.diary.domain.bean.DiaryEntry;
 import com.sonu.diary.domain.bean.DiaryPage;
+import com.sonu.diary.util.AppUtil;
 import com.sonu.diary.util.DateUtils;
 
 import java.sql.Timestamp;
@@ -25,6 +27,9 @@ public class GeneralEntry extends AbstractActivity {
     private TextView creationTimeLabel;
     private TextView lastModifiedTimeLabel;
     private TextView txtEntryActionTime;
+    private TextView txtExpenditureAmount;
+    private TextView txtExpenditureSource;
+    private Switch swhIsSharable;
     private DatabaseOperations dbOpers;
 
     @Override
@@ -45,8 +50,12 @@ public class GeneralEntry extends AbstractActivity {
         creationTimeLabel = (TextView) findViewById(R.id.lblCreationTime);
         lastModifiedTimeLabel = (TextView) findViewById(R.id.lblLastModifiedOn);
         txtEntryActionTime = (TextView) findViewById(R.id.txtEntryActionTime);
+        txtExpenditureAmount = (TextView)findViewById(R.id.txtExpenditure);
+        txtExpenditureSource = (TextView)findViewById(R.id.txtExpenditureSource);
+        swhIsSharable = (Switch)findViewById(R.id.swhIsSharable);
         Log.i(GeneralEntry.class.getName(), "Done Initializing UI Objects.");
 
+        swhIsSharable.setChecked(false);
         Timestamp creationTime = DateUtils.getCurrentTimestamp();
         txtEntryActionTime.setText(DateUtils.getStringDateFromTimestampInFormat(creationTime, DateUtils.DEFAULT_TIMESTAMP_FORMAT));
         creationTimeLabel.setText(DateUtils.getStringDateFromTimestampInFormat(creationTime, DateUtils.DEFAULT_TIMESTAMP_FORMAT));
@@ -68,9 +77,19 @@ public class GeneralEntry extends AbstractActivity {
         de.setEntryDescription(entryDescription.getText().toString());
         de.setEntryTitle(entryTitle.getText().toString());
         de.setLocation(entryLocation.getText().toString());
+        String expAmount = null == txtExpenditureAmount.getText()?null:txtExpenditureAmount.getText().toString();
+        if(null != expAmount && !expAmount.isEmpty() && !expAmount.equals("0") && AppUtil.isInteger(expAmount, 10)){
+            de.setExpenseAdded(true);
+            de.setEntryExpenditure(Integer.parseInt(txtExpenditureAmount.getText().toString()));
+            de.setEntryExpenditureSource(txtExpenditureSource.getText().toString());
+        } else {
+            de.setExpenseAdded(false);
+        }
         if(validationPassed()) {
             Log.i(GeneralEntry.class.getName(), "Saving the generic Entry.");
             DiaryCache.addNewDiaryEntry(de, this.getApplicationContext());
+            MainActivity mainActivity = (MainActivity)getIntent().getSerializableExtra("mainActivity");
+            if(null != mainActivity) mainActivity.notifyMainClass();
             finish();
         }else{
             Log.i(GeneralEntry.class.getName(), "Data Validation on the entered data failed.");

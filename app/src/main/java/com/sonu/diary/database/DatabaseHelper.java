@@ -17,13 +17,9 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableUtils;
-import com.sonu.diary.domain.bean.ConfidentialDiaryEntry;
 import com.sonu.diary.domain.bean.Diary;
 import com.sonu.diary.domain.bean.DiaryEntry;
 import com.sonu.diary.domain.bean.DiaryPage;
-import com.sonu.diary.domain.bean.ExpenditureDiaryEntry;
-import com.sonu.diary.domain.bean.IdeaDiaryEntry;
-import com.sonu.diary.domain.bean.LendDiaryEntry;
 import com.sonu.diary.domain.bean.Person;
 import com.sonu.diary.util.DateUtils;
 
@@ -44,9 +40,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    private Class[] dbMappedClassList = {ConfidentialDiaryEntry.class, Diary.class,
-            DiaryEntry.class, DiaryPage.class, ExpenditureDiaryEntry.class,
-            IdeaDiaryEntry.class, LendDiaryEntry.class, Person.class };
+    private Class[] dbMappedClassList = {Diary.class, DiaryEntry.class, DiaryPage.class, Person.class };
 
     @Override
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {

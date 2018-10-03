@@ -29,6 +29,14 @@ public class DiaryEntry {
     @DatabaseField
     private String location;
     @DatabaseField
+    private Integer entryExpenditure;
+    @DatabaseField
+    private String entryExpenditureSource;
+    @DatabaseField
+    private boolean isSharable;
+    @DatabaseField
+    private boolean isExpenseAdded;
+    @DatabaseField
     private int securityClearanceLevel;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private DiaryPage diaryPage;
@@ -47,6 +55,25 @@ public class DiaryEntry {
         this.entryActionTime = entryActionTime;
         this.entryLocationLat = entryLocationLat;
         this.entryLocationLon = entryLocationLon;
+    }
+
+    public DiaryEntry(Long entryId, String entryTitle, String entryDescription, Timestamp entryCreatedOn, Timestamp entryLastUpdatedOn,
+                      Timestamp entryActionTime, double entryLocationLat, double entryLocationLon, String location, Integer entryExpenditure,
+                      String entryExpenditureSource, boolean isSharable, boolean isExpenseAdded, int securityClearanceLevel) {
+        this.entryId = entryId;
+        this.entryTitle = entryTitle;
+        this.entryDescription = entryDescription;
+        this.entryCreatedOn = entryCreatedOn;
+        this.entryLastUpdatedOn = entryLastUpdatedOn;
+        this.entryActionTime = entryActionTime;
+        this.entryLocationLat = entryLocationLat;
+        this.entryLocationLon = entryLocationLon;
+        this.location = location;
+        this.entryExpenditure = entryExpenditure;
+        this.entryExpenditureSource = entryExpenditureSource;
+        this.isSharable = isSharable;
+        this.isExpenseAdded = isExpenseAdded;
+        this.securityClearanceLevel = securityClearanceLevel;
     }
 
     public String getEntryTitle() {
@@ -136,5 +163,37 @@ public class DiaryEntry {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Integer getEntryExpenditure() {
+        return entryExpenditure;
+    }
+
+    public void setEntryExpenditure(Integer entryExpenditure) {
+        this.entryExpenditure = entryExpenditure;
+    }
+
+    public String getEntryExpenditureSource() {
+        return entryExpenditureSource;
+    }
+
+    public void setEntryExpenditureSource(String entryExpenditureSource) {
+        this.entryExpenditureSource = entryExpenditureSource;
+    }
+
+    public boolean isSharable() {
+        return isSharable;
+    }
+
+    public void setSharable(boolean sharable) {
+        isSharable = sharable;
+    }
+
+    public boolean isExpenseAdded() {
+        return isExpenseAdded;
+    }
+
+    public void setExpenseAdded(boolean expenseAdded) {
+        isExpenseAdded = expenseAdded;
     }
 }

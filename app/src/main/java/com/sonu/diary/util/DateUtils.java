@@ -18,7 +18,8 @@ import java.util.Locale;
 public class DateUtils {
 
     private static Calendar calendar = null;
-    public static final String DEFAULT_TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss";
+    public static final String DEFAULT_TIMESTAMP_FORMAT = "dd/MMM/yyyy HH:mm:ss";
+    public static final String DEFAULT_COMPONENT_TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss";
     public static final String DEFAULT_DATE_FORMAT = "MM/dd/yyyy";
     public static final String NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS = "ddMMyyyy";
 
@@ -56,12 +57,12 @@ public class DateUtils {
     }
 
     private static String getTimeComponentFromTimestamp(Timestamp ts,int index){
-        String strDate = getStringDateFromTimestampInFormat(ts, DEFAULT_TIMESTAMP_FORMAT).split(" ")[1];
+        String strDate = getStringDateFromTimestampInFormat(ts, DEFAULT_COMPONENT_TIMESTAMP_FORMAT).split(" ")[1];
         return strDate.split(":")[index];
     }
 
     private static String getDateComponentFromTimestamp(Timestamp ts, int index){
-        String strDate = getStringDateFromTimestampInFormat(ts, DEFAULT_TIMESTAMP_FORMAT).split(" ")[0];
+        String strDate = getStringDateFromTimestampInFormat(ts, DEFAULT_COMPONENT_TIMESTAMP_FORMAT).split(" ")[0];
         return strDate.split("/")[index];
     }
 

@@ -11,9 +11,10 @@ import com.sonu.diary.util.DatePicker;
 import com.sonu.diary.util.DateUtils;
 import com.sonu.diary.util.TimePicker;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class AbstractActivity extends AppCompatActivity {
+public class AbstractActivity extends AppCompatActivity implements Serializable {
 
     private int year, month, dayOfMonth, hour, minute, second=0;
     private View view;

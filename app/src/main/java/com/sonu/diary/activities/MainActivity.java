@@ -8,7 +8,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,25 +20,27 @@ import android.widget.TextView;
 
 import com.sonu.diary.R;
 import com.sonu.diary.adapters.DiaryEntryAdapter;
+import com.sonu.diary.caches.DiaryCache;
 import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
-import com.sonu.diary.database.DatabaseOperations;
 import com.sonu.diary.handers.ui.DashboardUIHandler;
 import com.sonu.diary.util.DateUtils;
 import com.sonu.diary.util.cartesian.CartesianCoordinate;
 import com.sonu.diary.util.cartesian.CircularPlottingSystem;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Date;
 
 
 public class MainActivity extends AbstractActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, Serializable {
 
     private boolean floatingMenuShown = false;
     private ListView lstEntries;
     private DiaryEntryAdapter adapter;
     private TextView pageDate;
+    private TextView txtExpenseForDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,8 @@ public class MainActivity extends AbstractActivity
         adapter = new DiaryEntryAdapter(MainActivity.this);
 
         lstEntries.setAdapter(adapter);
+
+        DiaryCache.setMainActivity(this);
 
         lstEntries.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -102,8 +105,20 @@ public class MainActivity extends AbstractActivity
         pageDate = (TextView)findViewById(R.id.txtViewPageDate);
         pageDate.setText(DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(), DateUtils.DEFAULT_DATE_FORMAT));
 
+        txtExpenseForDate = (TextView)findViewById(R.id.txtExpenseForDate);
+        String sb = "Expense for Today: ₹" +
+                DiaryCache.getTotalExpenseForToday();
+        txtExpenseForDate.setText(sb);
+
     }
 
+    protected void onPostResume() {
+        super.onPostResume();
+        adapter.notifyDataSetChanged();
+        String sb = "Expense for Today: ₹" +
+                DiaryCache.getTotalExpenseForToday();
+        txtExpenseForDate.setText(sb);
+    }
 
     private void initializeDbOperations() {
         DatabaseManager.init(this.getApplicationContext());
@@ -208,7 +223,7 @@ public class MainActivity extends AbstractActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("Stateme  ntWithEmptyBody")
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.

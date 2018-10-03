@@ -8,30 +8,43 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/deTitle"
-            android:layout_width="wrap_content"
+        <TableLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:padding="5dip"
-            android:text="Testing"/>
+            android:id="@+id/table">
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/creationTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:padding="5dip"
+                    android:text="Timestamp"/>
+                <TextView
+                    android:id="@+id/deTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:padding="5dip"
+                    android:text="Title"/>
+            </TableRow>
+        </TableLayout>
         <TextView
-            android:id="@+id/creationTime"
+            android:id="@+id/deExpense"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:padding="5dip"
-            android:text="Timestamp"/>
+            android:text="Expense"/>
         <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_gravity="left|top|center_vertical"
             android:layout_height="wrap_content"
             android:padding="5dip"
-            android:layout_below="@+id/creationTime"/>
-
-
-
+            android:layout_below="@+id/deExpense"
+            android:text="Description Comes here."/>
     </RelativeLayout>
-
 </RelativeLayout>
