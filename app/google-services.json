@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "38901170531",
+    "firebase_url": "https://diary-61af6.firebaseio.com",
+    "project_id": "diary-61af6",
+    "storage_bucket": "diary-61af6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:38901170531:android:49ec55826968a095",
+        "android_client_info": {
+          "package_name": "com.sonu.diary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "38901170531-id36kp1udfn0mo58m11fs9pat24ht88k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBijH194SKGIeAu2vCzappXPYuVsb9wVdg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

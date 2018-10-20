@@ -50,8 +50,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     public void createTableForAllTheBeans() {
-        //TODO: Automate finding the list of beans for table creation.
-
         for(Class cls : dbMappedClassList){
             if(cls.isAnnotationPresent(DatabaseTable.class)) {
                 System.out.println("Creating table for the bean: " + cls);
@@ -108,15 +106,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 }
             }
             recCount = diaryDao.countOf();
+            long diaryPageId = Long.parseLong(
+                    DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(),
+                            DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS));
             if(recCount == 0){
                  if(null == diaryDao.queryForId(DateUtils.getCurrentYear())) {
                      List<DiaryPage> diaryPageList = new LinkedList<>();
                      DiaryPage diaryPage = new DiaryPage();
                      Diary diary = new Diary();
-                     diaryPage.setPageId(Long.parseLong(
-                                     DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(),
-                                             DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS))
-                     );
+                     diaryPage.setPageId(diaryPageId);
                      diaryPage.setPageDate(new Date(DateUtils.getCurrentTimestamp().getTime()));
                      diaryPage.setDiaryEntry(null);
                      diary.setYear(getCurrentYear());
@@ -125,8 +123,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                      diaryPageList.add(diaryPage);
                      diary.setDiaryPages(diaryPageList);
                      diaryDao.create(diary);
-                     diaryPageDao.create(diaryPage);
                 }
+            }
+            if(null == diaryPageDao.queryForId(diaryPageId)){
+                Diary diary = diaryDao.queryForId(DateUtils.getCurrentYear());
+                DiaryPage diaryPage = new DiaryPage();
+                diaryPage.setPageId(diaryPageId);
+                diaryPage.setPageDate(new Date(DateUtils.getCurrentTimestamp().getTime()));
+                diaryPage.setDiaryEntry(null);
+                diaryPage.setDiary(diary);
+                diary.getDiaryPages().add(diaryPage);
+                diaryPageDao.create(diaryPage);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -154,7 +161,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public Dao<?, ?> getRuntimeDao(Class cls) throws SQLException {
         Dao<?,?> dao = daoMap.get(cls.getName());
         if(null == dao){
-            dao = DaoManager.createDao(connectionSource, cls);
+            dao = (Dao<?, ?>)DaoManager.createDao(connectionSource, cls);
         }
         daoMap.put(cls.getName(), dao);
         return dao;

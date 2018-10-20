@@ -9,15 +9,21 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior" tools:showIn="@layout/app_bar_main"
     tools:context="com.sonu.diary.activities.MainActivity">
 
-    <TextView android:text="Date" android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/txtViewPageDate"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtViewPageDate" />
+        android:text="Date"
+        android:onClick="lblDateTouched"/>
 
-    <TextView android:text="Thought" android:layout_width="wrap_content"
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/txtViewPageDate"
+        android:src="@drawable/ic_filter_none"
         android:layout_alignParentEnd="true"
-        android:id="@+id/txtViewPageAdditional" />
+        android:id="@+id/txtViewPageAdditional"
+        android:contentDescription="Filter" />
 
     <TextView
         android:layout_width="wrap_content"

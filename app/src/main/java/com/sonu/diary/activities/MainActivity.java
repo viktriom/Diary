@@ -1,5 +1,6 @@
 package com.sonu.diary.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.sonu.diary.R;
 import com.sonu.diary.adapters.DiaryEntryAdapter;
+import com.sonu.diary.caches.CacheManager;
 import com.sonu.diary.caches.DiaryCache;
 import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
@@ -30,6 +32,7 @@ import com.sonu.diary.util.cartesian.CircularPlottingSystem;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 
 
@@ -54,22 +57,16 @@ public class MainActivity extends AbstractActivity
 
         lstEntries.setAdapter(adapter);
 
-        DiaryCache.setMainActivity(this);
+        Context context = this;
 
         lstEntries.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                final String item = (String) parent.getItemAtPosition(position);
-                view.animate().setDuration(2000).alpha(0)
-                        .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                                view.setAlpha(1);
-                            }
-                        });
+                Intent intent = new Intent(context, GeneralEntry.class);
+                long entryId = (Long)view.getTag();
+                intent.putExtra("entryId",entryId);
+                startActivity(intent);
             }
 
         });
@@ -106,8 +103,7 @@ public class MainActivity extends AbstractActivity
         pageDate.setText(DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(), DateUtils.DEFAULT_DATE_FORMAT));
 
         txtExpenseForDate = (TextView)findViewById(R.id.txtExpenseForDate);
-        String sb = "Expense for Today: ₹" +
-                DiaryCache.getTotalExpenseForToday();
+        String sb = "Expense for Today: ₹" + CacheManager.getDiaryCache().getTotalExpenseForPage();
         txtExpenseForDate.setText(sb);
 
     }
@@ -115,8 +111,7 @@ public class MainActivity extends AbstractActivity
     protected void onPostResume() {
         super.onPostResume();
         adapter.notifyDataSetChanged();
-        String sb = "Expense for Today: ₹" +
-                DiaryCache.getTotalExpenseForToday();
+        String sb = "Expense for Today: ₹" + CacheManager.getDiaryCache().getTotalExpenseForPage();
         txtExpenseForDate.setText(sb);
     }
 
@@ -124,10 +119,11 @@ public class MainActivity extends AbstractActivity
         DatabaseManager.init(this.getApplicationContext());
         DatabaseManager dbManager = DatabaseManager.getInstance();
         DatabaseHelper dbHelper = dbManager.getHelper();
-        dbHelper.dropAllTables();
+        //dbHelper.dropAllTables();
         dbHelper.createTableForAllTheBeans();
-        dbHelper.truncateAllTables();
+        //dbHelper.truncateAllTables();
         dbHelper.createDiaryForCurrentYear();
+        CacheManager.getDiaryCache().initializeCaches(this);
     }
 
     private void handleFloatingMenu() {
@@ -261,13 +257,23 @@ public class MainActivity extends AbstractActivity
     }
 
     public void showRoutineEntry(View view) {
-        //Intent intent = new Intent(this, RoutineActivity.class);
-        //startActivity(intent);
         DashboardUIHandler dashboardUIHandler = new DashboardUIHandler();
         try {
             dashboardUIHandler.displayAllEntriesForToday(new Date(DateUtils.getCurrentTimestamp().getTime()), this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void lblDateTouched(View view) {
+        super.showDatePicker(view, DateUtils.getCurrentTimestamp());
+    }
+
+    @Override
+    public void performActionAfterDateTimeUpdate(Timestamp ts) {
+        CacheManager.getDiaryCache().setCurrentPageId(DateUtils.getNumericDateForPageId(ts));
+        adapter.notifyDataSetChanged();
+        String sb = "Expense for Today: ₹" + CacheManager.getDiaryCache().getTotalExpenseForPage();
+        txtExpenseForDate.setText(sb);
     }
 }

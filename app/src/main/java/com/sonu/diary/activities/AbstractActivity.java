@@ -19,8 +19,13 @@ public class AbstractActivity extends AppCompatActivity implements Serializable 
     private int year, month, dayOfMonth, hour, minute, second=0;
     private View view;
     private Timestamp ts;
+    private boolean showTimePicker = false;
 
-    public void showTimePicker(Timestamp ts){
+    public void showTimePicker(View view, Timestamp ts){
+        if(null == this.view)
+            this.view = view;
+        if(null == ts)
+            this.ts = ts;
         Bundle bundle = new Bundle();
         bundle.putSerializable("hour", DateUtils.getHoursFromTimestamp(ts));
         bundle.putSerializable("minute", DateUtils.getMinutesFromTimestamp(ts));
@@ -32,13 +37,17 @@ public class AbstractActivity extends AppCompatActivity implements Serializable 
     public void updateSelectedTime(int hour, int minute){
        this.hour = hour;
        this.minute = minute;
-
-        String strTS = this.dayOfMonth + "/" + this.month + "/" + this.year + " " + this.hour + ":" + this.minute + ":" + this.second;
+       String strTS = this.dayOfMonth + "/" + this.month + "/" + this.year + " " + this.hour + ":" + this.minute + ":" + this.second;
          Timestamp updatedTs = DateUtils.getTimestampFromStringInFormat(strTS, "dd/MM/yyyy HH:mm:ss");
         ((TextView)view).setText(DateUtils.getStringDateFromTimestampInFormat(updatedTs, DateUtils.DEFAULT_TIMESTAMP_FORMAT));
+        performActionAfterDateTimeUpdate(updatedTs);
     }
 
-    public void showDatePicker(Timestamp ts){
+    public void showDatePicker(View view, Timestamp ts){
+        if(null == this.view)
+            this.view = view;
+        if(null == this.ts)
+            this.ts = ts;
         Bundle bundle = new Bundle();
         bundle.putSerializable("year", DateUtils.getYearFromTimestamp(ts));
         bundle.putSerializable("month", DateUtils.getMonthFromTimestamp(ts));
@@ -52,17 +61,26 @@ public class AbstractActivity extends AppCompatActivity implements Serializable 
         this.year = year;
         this.month = month;
         this.dayOfMonth = dayOfMonth;
-        showTimePicker(ts);
+        if(!showTimePicker){
+            String strTS = this.dayOfMonth + "/" + this.month + "/" + this.year + " " + this.hour + ":" + this.minute + ":" + this.second;
+            Timestamp updatedTs = DateUtils.getTimestampFromStringInFormat(strTS, "dd/MM/yyyy");
+            ((TextView)view).setText(DateUtils.getStringDateFromTimestampInFormat(updatedTs, DateUtils.DEFAULT_DATE_FORMAT));
+            performActionAfterDateTimeUpdate(updatedTs);
+        } else {
+            showTimePicker(view, ts);
+            this.showTimePicker = false;
+        }
     }
 
     public void showDateTimePicker(View view, Timestamp ts){
         this.view = view;
         this.ts = ts;
-        showDatePicker(ts);
+        this.showTimePicker = true;
+        showDatePicker(view, ts);
     }
 
-    public void showDateTimePicker(View view){
-        showDateTimePicker(view, DateUtils.getCurrentTimestamp());
+    public void performActionAfterDateTimeUpdate(Timestamp ts){
+        return;
     }
 
 }

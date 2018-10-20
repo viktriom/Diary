@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.sonu.diary.R;
+import com.sonu.diary.caches.CacheManager;
 import com.sonu.diary.caches.DiaryCache;
 import com.sonu.diary.domain.bean.DiaryEntry;
 import com.sonu.diary.util.DateUtils;
@@ -23,12 +24,12 @@ public class DiaryEntryAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        return (null == DiaryCache.getDiaryEntries() || DiaryCache.getDiaryEntries().isEmpty())?0:DiaryCache.getDiaryEntries().size();
+        return (null == CacheManager.getDiaryCache().getDiaryEntries() || CacheManager.getDiaryCache().getDiaryEntries().isEmpty())?0:CacheManager.getDiaryCache().getDiaryEntries().size();
     }
 
     @Override
     public DiaryEntry getItem(int i) {
-        return (null == DiaryCache.getDiaryEntries() || DiaryCache.getDiaryEntries().isEmpty())?null:DiaryCache.getDiaryEntries().get(i);
+        return (null == CacheManager.getDiaryCache().getDiaryEntries() || CacheManager.getDiaryCache().getDiaryEntries().isEmpty())?null:CacheManager.getDiaryCache().getDiaryEntries().get(i);
     }
 
     @Override
@@ -38,9 +39,14 @@ public class DiaryEntryAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        DiaryEntry de = DiaryCache.getDiaryEntry(position);
+        DiaryEntry de = CacheManager.getDiaryCache().getDiaryEntry(position);
 
         LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        if(null == de){
+            assert vi != null;
+            return vi.inflate(R.layout.list_item_diary_entry, null);
+        }
 
         if( null == convertView) {
             assert vi != null;
@@ -59,12 +65,16 @@ public class DiaryEntryAdapter extends BaseAdapter{
         txtDescription.setText(de.getEntryDescription());
         txtTitle.setText(de.getEntryTitle());
         txtCreationTime.setText("[" + DateUtils.getStringTimeFromTimestamp(de.getEntryActionTime()) + "]:");
+        TextView expense = (TextView)convertView.findViewById(R.id.deExpense);
         if(de.isExpenseAdded()){
-            TextView expense = (TextView)convertView.findViewById(R.id.deExpense);
             String sb = de.getEntryExpenditureSource() +
                     ":₹" +
                     String.valueOf(de.getEntryExpenditure());
             expense.setText(sb);
+        } else {
+            expense.setText("-");
         }
+        Long id = de.getEntryId();
+        convertView.setTag(id);
     }
 }

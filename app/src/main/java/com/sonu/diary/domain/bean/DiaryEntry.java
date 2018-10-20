@@ -4,6 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * Created by sonu on 11/07/16.
@@ -195,5 +196,19 @@ public class DiaryEntry {
 
     public void setExpenseAdded(boolean expenseAdded) {
         isExpenseAdded = expenseAdded;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DiaryEntry that = (DiaryEntry) o;
+        return Objects.equals(entryId, that.entryId);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(entryId);
     }
 }

@@ -8,4 +8,14 @@ package com.sonu.diary.caches;
  */
 
 public class CacheManager {
+
+    private static DiaryCache diaryCache = null;
+
+    public static DiaryCache getDiaryCache(){
+        if(null == diaryCache){
+            diaryCache = new DiaryCache();
+        }
+        return diaryCache;
+    }
+
 }

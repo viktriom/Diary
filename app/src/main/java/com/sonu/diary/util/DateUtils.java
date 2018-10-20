@@ -20,7 +20,7 @@ public class DateUtils {
     private static Calendar calendar = null;
     public static final String DEFAULT_TIMESTAMP_FORMAT = "dd/MMM/yyyy HH:mm:ss";
     public static final String DEFAULT_COMPONENT_TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss";
-    public static final String DEFAULT_DATE_FORMAT = "MM/dd/yyyy";
+    public static final String DEFAULT_DATE_FORMAT = "dd/MMM/yyyy";
     public static final String NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS = "ddMMyyyy";
 
     private static void init(){
@@ -125,10 +125,17 @@ public class DateUtils {
 
     public static int calculateAge(Date birthDate) {
         LocalDate bDate = new LocalDate(birthDate);
-        LocalDate now = new LocalDate(getCurrentTimestamp()); // test, in real world without args
+        LocalDate now = new LocalDate(getCurrentTimestamp());
         Years age = Years.yearsBetween(bDate, now);
         return age.getYears();
     }
 
+    public static Long getCurrentNumericDateForPageId(){
+        return Long.parseLong(DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(), DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS));
+    }
+
+    public static Long getNumericDateForPageId(Timestamp ts){
+        return Long.parseLong(DateUtils.getStringDateFromTimestampInFormat(ts, DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS));
+    }
 
 }

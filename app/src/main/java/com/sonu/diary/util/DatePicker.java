@@ -25,11 +25,11 @@ public class DatePicker extends AppCompatDialogFragment implements DatePickerDia
     }
 
     public Dialog onCreateDialog(Bundle savedInstanceState){
-        return new DatePickerDialog(getActivity(), this, year, month, dayOfMonth);
+        return new DatePickerDialog(getActivity(), this, year, month - 1, dayOfMonth);
     }
 
     @Override
     public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
-        caller.updateSelectedDate(year, month, dayOfMonth);
+        caller.updateSelectedDate(year, month + 1, dayOfMonth);
     }
 }
