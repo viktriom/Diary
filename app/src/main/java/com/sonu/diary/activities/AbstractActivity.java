@@ -22,9 +22,9 @@ public class AbstractActivity extends AppCompatActivity implements Serializable 
     private boolean showTimePicker = false;
 
     public void showTimePicker(View view, Timestamp ts){
-        if(null == this.view)
+        if(null == this.view || !this.view.equals(view))
             this.view = view;
-        if(null == ts)
+        if(null == this.ts || this.ts.equals(ts))
             this.ts = ts;
         Bundle bundle = new Bundle();
         bundle.putSerializable("hour", DateUtils.getHoursFromTimestamp(ts));
@@ -41,12 +41,13 @@ public class AbstractActivity extends AppCompatActivity implements Serializable 
          Timestamp updatedTs = DateUtils.getTimestampFromStringInFormat(strTS, "dd/MM/yyyy HH:mm:ss");
         ((TextView)view).setText(DateUtils.getStringDateFromTimestampInFormat(updatedTs, DateUtils.DEFAULT_TIMESTAMP_FORMAT));
         performActionAfterDateTimeUpdate(updatedTs);
+        performActionAfterDateTimeUpdate(view, updatedTs);
     }
 
     public void showDatePicker(View view, Timestamp ts){
-        if(null == this.view)
+        if(null == this.view || !this.view.equals(view))
             this.view = view;
-        if(null == this.ts)
+        if(null == this.ts || this.ts.equals(ts))
             this.ts = ts;
         Bundle bundle = new Bundle();
         bundle.putSerializable("year", DateUtils.getYearFromTimestamp(ts));
@@ -66,6 +67,7 @@ public class AbstractActivity extends AppCompatActivity implements Serializable 
             Timestamp updatedTs = DateUtils.getTimestampFromStringInFormat(strTS, "dd/MM/yyyy");
             ((TextView)view).setText(DateUtils.getStringDateFromTimestampInFormat(updatedTs, DateUtils.DEFAULT_DATE_FORMAT));
             performActionAfterDateTimeUpdate(updatedTs);
+            performActionAfterDateTimeUpdate(view,updatedTs);
         } else {
             showTimePicker(view, ts);
             this.showTimePicker = false;
@@ -79,8 +81,8 @@ public class AbstractActivity extends AppCompatActivity implements Serializable 
         showDatePicker(view, ts);
     }
 
-    public void performActionAfterDateTimeUpdate(Timestamp ts){
-        return;
-    }
+    public void performActionAfterDateTimeUpdate(Timestamp ts){ }
+
+    public void performActionAfterDateTimeUpdate(View view, Timestamp ts) { }
 
 }

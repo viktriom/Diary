@@ -8,7 +8,9 @@ import com.sonu.diary.domain.bean.DiaryEntry;
 import com.sonu.diary.domain.bean.DiaryPage;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class DBUtil {
 
@@ -49,11 +51,27 @@ public class DBUtil {
     }
 
     public static DiaryEntry getDiaryEntryForId(long id) throws SQLException {
-        QueryBuilder<DiaryEntry, Long> queryBuilder = (QueryBuilder<DiaryEntry, Long>) DatabaseManager.getInstance().getHelper().getDao(DiaryEntry.class).queryBuilder();
+        QueryBuilder<DiaryEntry, Long> queryBuilder = getQueryBuilderForDiaryEntry();
         Where<DiaryEntry, Long> where = queryBuilder.where();
         where.eq("diaryentry_id", DateUtils.getCurrentYear());
         queryBuilder.setWhere(where);
         return queryBuilder.queryForFirst();
+    }
+
+    public static List<DiaryEntry> getDiaryEntryForFilter(Where<DiaryEntry, Long> filterCondition) throws SQLException {
+        QueryBuilder<DiaryEntry, Long> queryBuilder = getQueryBuilderForDiaryEntry();
+        queryBuilder.setWhere(filterCondition);
+        queryBuilder.orderBy("diaryentry_id", true);
+        return queryBuilder.query();
+    }
+
+    public static  QueryBuilder<DiaryEntry, Long> getQueryBuilderForDiaryEntry() {
+        try {
+            return (QueryBuilder<DiaryEntry, Long>) DatabaseManager.getInstance().getHelper().getDao(DiaryEntry.class).queryBuilder();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

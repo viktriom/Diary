@@ -5,4 +5,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="general_entry">General Entry</string>
+    <string name="lastModifiedOn">Modified</string>
 </resources>

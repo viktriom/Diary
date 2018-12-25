@@ -1,13 +1,16 @@
-package com.sonu.diary;
+package com.sonu.diary.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class FilterView extends AppCompatActivity {
+import com.sonu.diary.R;
+
+public class DebtEntryController extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_filter_view);
+        setContentView(R.layout.activity_debt_entry);
     }
+
 }

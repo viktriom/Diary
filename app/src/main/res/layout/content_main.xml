@@ -23,6 +23,7 @@
         android:src="@drawable/ic_filter_none"
         android:layout_alignParentEnd="true"
         android:id="@+id/txtViewPageAdditional"
+        android:onClick="imgFilterTouched"
         android:contentDescription="Filter" />
 
     <TextView

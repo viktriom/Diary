@@ -2,6 +2,7 @@ package com.sonu.diary.caches;
 
 import android.content.Context;
 
+import com.j256.ormlite.stmt.Where;
 import com.sonu.diary.database.DatabaseManager;
 import com.sonu.diary.domain.bean.Diary;
 import com.sonu.diary.domain.bean.DiaryEntry;
@@ -10,16 +11,13 @@ import com.sonu.diary.util.DBUtil;
 import com.sonu.diary.util.DateUtils;
 
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +29,10 @@ public class DiaryCache {
     private Map<Long, DiaryPage> diaryPageCache = new HashMap<>();
 
     private Long currentPageId = DateUtils.getCurrentNumericDateForPageId();
+
+    private boolean isFilterApplied = false;
+
+    private Where<DiaryEntry, Long> filterCondition = DBUtil.getQueryBuilderForDiaryEntry().where();
 
 
     public void addOrUpdateEntry(DiaryEntry diaryEntry, Boolean editMode){
@@ -52,25 +54,44 @@ public class DiaryCache {
         if(null == diaryPageCache.get(currentPageId) && null == diaryPageCache.get(currentPageId).getDiaryEntry()){
             return null;
         }
-        List<DiaryEntry> sortedList = diaryPageCache.get(currentPageId).getDiaryEntry().stream().sorted((t1, t2) -> (t2.getEntryActionTime().compareTo(t1.getEntryActionTime()))).collect(Collectors.toList());
+        List<DiaryEntry> sortedList = null;
+        if(isFilterApplied) {
+            sortedList = diaryPageCache.get(0L).getDiaryEntry().stream().sorted((t1, t2) -> (t2.getEntryActionTime().compareTo(t1.getEntryActionTime()))).collect(Collectors.toList());
+        }else {
+            sortedList = new LinkedList<>(diaryPageCache.get(currentPageId).getDiaryEntry());
+        }
         return sortedList.get(index);
     }
 
     public List<DiaryEntry> getDiaryEntries() {
         List<DiaryEntry> de = new LinkedList<>();
-        if(null != diaryPageCache.get(currentPageId) && null != diaryPageCache.get(currentPageId).getDiaryEntry())
-            de.addAll(diaryPageCache.get(currentPageId).getDiaryEntry());
-        return de;
+        if(!isFilterApplied) {
+            if (null != diaryPageCache.get(currentPageId) && null != diaryPageCache.get(currentPageId).getDiaryEntry())
+                de.addAll(diaryPageCache.get(currentPageId).getDiaryEntry());
+            return de;
+        } else {
+            return filteredEntries();
+        }
+    }
+
+    private List<DiaryEntry> filteredEntries() {
+        LinkedList<DiaryEntry> lst = new LinkedList<>();
+        try {
+            lst.addAll(DBUtil.getDiaryEntryForFilter(filterCondition));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if(!diaryPageCache.containsKey(0L)) {
+            DiaryPage diaryPage = new DiaryPage();
+            diaryPage.setPageId(0L);
+            diaryPage.setDiaryEntry(lst);
+            diaryPageCache.put(0L, diaryPage);
+        }
+        return new LinkedList<>(diaryPageCache.get(0L).getDiaryEntry());
     }
 
     public int getTotalExpenseForPage(){
-        if(null == diaryPageCache.get(currentPageId)){
-            populatePageForCurrentDate();
-        }
-        if(null == diaryPageCache.get(currentPageId) || null == diaryPageCache.get(DateUtils.getCurrentNumericDateForPageId()).getDiaryEntry()){
-            return 0;
-        }
-        return diaryPageCache.get(currentPageId).getDiaryEntry().stream().filter(DiaryEntry::isExpenseAdded).map(DiaryEntry::getEntryExpenditure).reduce(0, (t1, t2)->t1+t2);
+        return getDiaryEntries().stream().filter(DiaryEntry::isExpenseAdded).map(DiaryEntry::getEntryExpenditure).reduce(0, (t1, t2)->t1+t2);
     }
 
     public void populatePageForCurrentDate(){
@@ -129,4 +150,36 @@ public class DiaryCache {
         populatePageCacheForDate(pageId);
         return diaryPageCache.get(pageId);
     }
+
+    public void clearFilters(){
+        isFilterApplied = false;
+        filterCondition.reset();
+        diaryPageCache.remove(0L);
+    }
+
+    public void applyFilter(){
+        isFilterApplied=true;
+    }
+
+    public void addSearchStringToFilter(String searchString){
+        try {
+            filterCondition.like("entryTitle", searchString);
+            filterCondition.or().like("entryDescription", searchString);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addDatesToFilterCondition(Timestamp fromDate, Timestamp toDate, boolean isSearchStringAdded){
+        try {
+            if(isSearchStringAdded)
+                filterCondition.and();
+            filterCondition.between("entryActionTime", fromDate, toDate);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isFIlterApplied(){ return isFilterApplied; }
+
 }

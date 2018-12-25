@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.common.cache.Cache;
 import com.sonu.diary.R;
 import com.sonu.diary.adapters.DiaryEntryAdapter;
 import com.sonu.diary.caches.CacheManager;
@@ -119,9 +120,7 @@ public class MainActivity extends AbstractActivity
         DatabaseManager.init(this.getApplicationContext());
         DatabaseManager dbManager = DatabaseManager.getInstance();
         DatabaseHelper dbHelper = dbManager.getHelper();
-        //dbHelper.dropAllTables();
         dbHelper.createTableForAllTheBeans();
-        //dbHelper.truncateAllTables();
         dbHelper.createDiaryForCurrentYear();
         CacheManager.getDiaryCache().initializeCaches(this);
     }
@@ -273,7 +272,12 @@ public class MainActivity extends AbstractActivity
     public void performActionAfterDateTimeUpdate(Timestamp ts) {
         CacheManager.getDiaryCache().setCurrentPageId(DateUtils.getNumericDateForPageId(ts));
         adapter.notifyDataSetChanged();
-        String sb = "Expense for Today: ₹" + CacheManager.getDiaryCache().getTotalExpenseForPage();
+        String sb = "Expense for selected Date is : ₹" + CacheManager.getDiaryCache().getTotalExpenseForPage();
         txtExpenseForDate.setText(sb);
+    }
+
+    public void imgFilterTouched(View view) {
+        Intent intent = new Intent(this, FilterViewController.class);
+        startActivity(intent);
     }
 }

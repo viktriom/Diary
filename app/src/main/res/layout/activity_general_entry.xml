@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="General Entry"
+        android:text="@string/general_entry"
         android:id="@+id/lblHeading"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/lblLastModifiedOn" />
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/lblLastModifiedOn"
-        android:text="Modified:"
+        android:text="@string/lastModifiedOn"
         android:textSize="10sp"
         android:layout_alignBottom="@+id/btnSave"
         android:layout_centerHorizontal="true" />
