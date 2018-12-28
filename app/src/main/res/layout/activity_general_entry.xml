@@ -38,31 +38,33 @@
         android:layout_centerHorizontal="true" />
 
     <EditText
+        android:id="@+id/txtEntryTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtEntryTitle"
-        android:hint="Title"
         android:layout_below="@+id/btnSave"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:hint="Title"
+        android:inputType="textCapWords" />
 
     <EditText
+        android:id="@+id/txtEntryLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtEntryLocation"
         android:layout_alignTop="@+id/txtEntryTitle"
         android:layout_alignParentEnd="true"
-        android:hint="Location" />
+        android:hint="Location"
+        android:inputType="textCapWords" />
 
     <EditText
         android:id="@+id/txtGeneralEntryDetail"
         android:layout_width="wrap_content"
         android:layout_height="258dp"
+        android:layout_below="@+id/txtEntryTitle"
         android:layout_alignEnd="@+id/txtEntryLocation"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtEntryTitle"
         android:layout_marginTop="31dp"
         android:ems="10"
-        android:inputType="textMultiLine" />
+        android:inputType="textCapSentences|textMultiLine" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -105,11 +107,13 @@
                 android:layout_gravity="left"
                 android:layout_marginTop="3dip"
                 android:text="Enter Expenditure Amount:" />
+
             <EditText
                 android:id="@+id/txtExpenditure"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
+                android:inputType="number"
                 android:onClick="showPicker"
                 android:text="" />
         </TableRow>
