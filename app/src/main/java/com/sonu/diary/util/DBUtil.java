@@ -3,14 +3,13 @@ package com.sonu.diary.util;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.sonu.diary.database.DatabaseManager;
-import com.sonu.diary.domain.bean.Diary;
-import com.sonu.diary.domain.bean.DiaryEntry;
-import com.sonu.diary.domain.bean.DiaryPage;
+import com.sonu.diary.domain.Diary;
+import com.sonu.diary.domain.DiaryEntry;
+import com.sonu.diary.domain.DiaryPage;
+import com.sonu.diary.domain.User;
+
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class DBUtil {
 
@@ -71,6 +70,18 @@ public class DBUtil {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    public static List<User> getUsers(String role) throws SQLException {
+        QueryBuilder<User, String> queryBuilder = (QueryBuilder<User, String>) DatabaseManager.getInstance().getHelper().getDao(User.class).queryBuilder();
+        Where<User, String> where = queryBuilder.where();
+        where.eq("role", role);
+        queryBuilder.setWhere(where);
+        return queryBuilder.query();
+    }
+
+    public static List<User> getAllUsersToBeShared(){
         return null;
     }
 

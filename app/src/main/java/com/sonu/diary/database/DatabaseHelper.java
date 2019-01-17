@@ -17,10 +17,11 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableUtils;
-import com.sonu.diary.domain.bean.Diary;
-import com.sonu.diary.domain.bean.DiaryEntry;
-import com.sonu.diary.domain.bean.DiaryPage;
-import com.sonu.diary.domain.bean.Person;
+import com.sonu.diary.domain.Diary;
+import com.sonu.diary.domain.DiaryEntry;
+import com.sonu.diary.domain.DiaryPage;
+import com.sonu.diary.domain.User;
+import com.sonu.diary.util.DBUtil;
 import com.sonu.diary.util.DateUtils;
 
 import static com.sonu.diary.util.DateUtils.*;
@@ -32,7 +33,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     private Dao<Diary, Integer> diaryDao = null;
-    private Dao<Person, Integer> personDao = null;
+    private Dao<User, Integer> personDao = null;
 
     private Map<String, Dao<?,?>> daoMap = new HashMap<>();
 
@@ -40,7 +41,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    private Class[] dbMappedClassList = {Diary.class, DiaryEntry.class, DiaryPage.class, Person.class };
+    private Class[] dbMappedClassList = {Diary.class, DiaryEntry.class, DiaryPage.class, User.class };
 
     @Override
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
@@ -93,40 +94,37 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public void createDiaryForCurrentYear() {
         try {
-            Dao<Person,Integer> personDao = getDao(Person.class);
+            Dao<User,String> userDao = getDao(User.class);
             Dao<Diary, Integer> diaryDao = getDao(Diary.class);
             Dao<DiaryPage, Long> diaryPageDao = getDao(DiaryPage.class);
-            long recCount = personDao.countOf();
-            Person person = null;
-            if(recCount == 0){
-                person = personDao.queryForId(1);
-                if(person == null) {
-                    person = new Person(1,"Mr", "Vivek", "Tripathi", "", DateUtils.getDateFromString("02/07/1988"));
-                    personDao.create(person);
-                }
+            long recCount = userDao.countOf();
+            List<User> users = DBUtil.getUsers("Owner");
+            User user;
+            if(null == users || users.size() == 0){
+                    user = new User("viktri","Mr", "Vivek", "Tripathi", "", "tripathi", "Owner", DateUtils.getDateFromString("02/07/1988"));
+                    userDao.create(user);
+            } else {
+                user = users.get(0);
             }
-            recCount = diaryDao.countOf();
-            long diaryPageId = Long.parseLong(
-                    DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(),
-                            DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS));
-            if(recCount == 0){
-                 if(null == diaryDao.queryForId(DateUtils.getCurrentYear())) {
+
+            Diary diary = diaryDao.queryForId(DateUtils.getCurrentYear());
+            long diaryPageId = Long.parseLong(DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(), DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS));
+            if(null == diary){
                      List<DiaryPage> diaryPageList = new LinkedList<>();
                      DiaryPage diaryPage = new DiaryPage();
-                     Diary diary = new Diary();
+                     diary = new Diary();
                      diaryPage.setPageId(diaryPageId);
                      diaryPage.setPageDate(new Date(DateUtils.getCurrentTimestamp().getTime()));
                      diaryPage.setDiaryEntry(null);
                      diary.setYear(getCurrentYear());
-                     diary.setOwner(person);
+                     diary.setOwner(user);
                      diaryPage.setDiary(diary);
                      diaryPageList.add(diaryPage);
                      diary.setDiaryPages(diaryPageList);
                      diaryDao.create(diary);
-                }
             }
+
             if(null == diaryPageDao.queryForId(diaryPageId)){
-                Diary diary = diaryDao.queryForId(DateUtils.getCurrentYear());
                 DiaryPage diaryPage = new DiaryPage();
                 diaryPage.setPageId(diaryPageId);
                 diaryPage.setPageDate(new Date(DateUtils.getCurrentTimestamp().getTime()));
@@ -137,12 +135,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            Log.e(DatabaseHelper.class.getName(), "Unable to insert data into Person and Diary table during application initialization. SQL Sate:"
+            Log.e(DatabaseHelper.class.getName(), "Unable to insert data into User and Diary table during application initialization. SQL Sate:"
                     + e.getSQLState()
                     + "SQL Error Code:" + e.getErrorCode()
                     + "error Message: " + e.getMessage());
         }
-        Log.i(DatabaseHelper.class.getName(),"Data SUCCESSFULLY inserted into Person and Diary table during application initialization.");
+        Log.i(DatabaseHelper.class.getName(),"Data SUCCESSFULLY inserted into User and Diary table during application initialization.");
     }
 
     @Override

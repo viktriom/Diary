@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import com.sonu.diary.R;
 import com.sonu.diary.caches.CacheManager;
-import com.sonu.diary.domain.bean.DiaryEntry;
-import com.sonu.diary.domain.bean.DiaryPage;
+import com.sonu.diary.domain.DiaryEntry;
+import com.sonu.diary.domain.DiaryPage;
 import com.sonu.diary.util.AppUtil;
 import com.sonu.diary.util.DateUtils;
 

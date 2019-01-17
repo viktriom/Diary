@@ -4,14 +4,13 @@ import android.content.Context;
 
 import com.j256.ormlite.stmt.Where;
 import com.sonu.diary.database.DatabaseManager;
-import com.sonu.diary.domain.bean.Diary;
-import com.sonu.diary.domain.bean.DiaryEntry;
-import com.sonu.diary.domain.bean.DiaryPage;
+import com.sonu.diary.domain.Diary;
+import com.sonu.diary.domain.DiaryEntry;
+import com.sonu.diary.domain.DiaryPage;
 import com.sonu.diary.util.DBUtil;
 import com.sonu.diary.util.DateUtils;
 
 import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;

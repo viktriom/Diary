@@ -12,29 +12,41 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.common.cache.Cache;
 import com.sonu.diary.R;
 import com.sonu.diary.adapters.DiaryEntryAdapter;
 import com.sonu.diary.caches.CacheManager;
-import com.sonu.diary.caches.DiaryCache;
 import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
 import com.sonu.diary.handers.ui.DashboardUIHandler;
 import com.sonu.diary.util.DateUtils;
+import com.sonu.diary.util.SecurityUtil;
 import com.sonu.diary.util.cartesian.CartesianCoordinate;
 import com.sonu.diary.util.cartesian.CircularPlottingSystem;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
 
 public class MainActivity extends AbstractActivity
@@ -94,9 +106,9 @@ public class MainActivity extends AbstractActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        /*NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setNavigationItemSelectedListener(this);*/
 
         lstEntries = (ListView) findViewById(R.id.lstEntries);
 
@@ -132,6 +144,8 @@ public class MainActivity extends AbstractActivity
         FloatingActionButton fab4 = (FloatingActionButton)findViewById(R.id.fab_4);
         FloatingActionButton fab5 = (FloatingActionButton)findViewById(R.id.fab_5);
         Animation showFab1 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab1_show);
+
+
         Animation hideFab1 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab1_hide);
         Animation showFab2 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab2_show);
         Animation hideFab2 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab2_hide);
@@ -257,11 +271,15 @@ public class MainActivity extends AbstractActivity
 
     public void showRoutineEntry(View view) {
         DashboardUIHandler dashboardUIHandler = new DashboardUIHandler();
-        try {
-            dashboardUIHandler.displayAllEntriesForToday(new Date(DateUtils.getCurrentTimestamp().getTime()), this);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        new Thread() {
+            public void run() {
+                try {
+                    SecurityUtil.deffieHelmen2();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     public void lblDateTouched(View view) {

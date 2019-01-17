@@ -1,7 +1,9 @@
-package com.sonu.diary.domain.bean;
+package com.sonu.diary.domain;
 
+import com.google.gson.Gson;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.sonu.diary.domain.enums.SyncStatus;
 
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -41,6 +43,8 @@ public class DiaryEntry {
     private int securityClearanceLevel;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private DiaryPage diaryPage;
+    @DatabaseField
+    private String syncStatus = SyncStatus.P.name();
 
     public DiaryEntry(){
 
@@ -198,6 +202,14 @@ public class DiaryEntry {
         isExpenseAdded = expenseAdded;
     }
 
+    public String getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(String syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -210,5 +222,11 @@ public class DiaryEntry {
     public int hashCode() {
 
         return Objects.hash(entryId);
+    }
+
+    @Override
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }

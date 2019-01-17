@@ -8,73 +8,81 @@
 
     <EditText
         android:id="@+id/ptSearchString"
-        android:layout_margin="5px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5px"
         android:hint="Enter Search String" />
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_margin="5px"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="5px">
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="12sp"
-            android:layout_margin="5px"/>
+            android:layout_margin="10px" />
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_margin="5px">
+
             <TextView
                 android:id="@+id/lblFromDate"
                 android:layout_marginLeft="5px"
-                android:text="From Date : "/>
+                android:text="From Date : " />
+
             <TextView
                 android:id="@+id/tvFromDate"
                 android:layout_gravity="right"
                 android:layout_marginRight="5px"
-                android:text="Current Date"
-                android:onClick="onFromDateTouched"/>
+                android:onClick="onFromDateTouched"
+                android:text="Current Date" />
         </TableRow>
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="12sp"
-            android:layout_margin="5px"/>
+            android:layout_margin="5px" />
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_margin="5px">
+
             <TextView
                 android:id="@+id/lblToDate"
                 android:layout_marginLeft="5px"
-                android:text="To Date : "/>
+                android:text="To Date : " />
+
             <TextView
                 android:id="@+id/tvToDate"
                 android:layout_gravity="right"
-                android:text="Current Date"
                 android:layout_marginRight="5px"
-                android:onClick="onToDateTouched"/>
+                android:onClick="onToDateTouched"
+                android:text="Current Date" />
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_margin="5px">
+
             <Button
                 android:id="@+id/btnApplyFilter"
-                android:text="Apply Filter"
-                android:textAlignment="center"
-                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="5px"
-                android:onClick="applyEntryFilter"/>
+                android:onClick="applyEntryFilter"
+                android:text="Apply Filter"
+                android:textAlignment="center" />
+
             <Button
                 android:id="@+id/btnClearFilter"
-                android:text="Clear Filter"
-                android:textAlignment="center"
-                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="5px"
-                android:onClick="clearEntryFilter"/>
+                android:onClick="clearEntryFilter"
+                android:text="Clear Filter"
+                android:textAlignment="center" />
         </TableRow>
     </TableLayout>
 

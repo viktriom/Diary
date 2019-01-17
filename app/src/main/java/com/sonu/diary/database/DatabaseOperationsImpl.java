@@ -2,10 +2,6 @@ package com.sonu.diary.database;
 
 import android.content.Context;
 
-import com.sonu.diary.domain.bean.DiaryEntry;
-import com.sonu.diary.domain.bean.DiaryPage;
-import com.sonu.diary.util.DateUtils;
-
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;

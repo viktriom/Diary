@@ -10,8 +10,7 @@ import android.widget.TextView;
 
 import com.sonu.diary.R;
 import com.sonu.diary.caches.CacheManager;
-import com.sonu.diary.caches.DiaryCache;
-import com.sonu.diary.domain.bean.DiaryEntry;
+import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.util.DateUtils;
 
 public class DiaryEntryAdapter extends BaseAdapter{
@@ -64,7 +63,10 @@ public class DiaryEntryAdapter extends BaseAdapter{
         TextView txtCreationTime = (TextView) convertView.findViewById(R.id.creationTime);
         txtDescription.setText(de.getEntryDescription());
         txtTitle.setText(de.getEntryTitle());
-        txtCreationTime.setText("[" + DateUtils.getStringTimeFromTimestamp(de.getEntryActionTime()) + "]:");
+        String strTime = "[" +
+                DateUtils.getStringDateFromTimestampInFormat(de.getEntryActionTime(), "dd/MMM/YY hh:mm") +
+                "]:";
+        txtCreationTime.setText(strTime);
         TextView expense = (TextView)convertView.findViewById(R.id.deExpense);
         if(de.isExpenseAdded()){
             String sb = de.getEntryExpenditureSource() +
