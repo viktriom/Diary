@@ -1,6 +1,7 @@
 package com.sonu.diary.domain;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -18,11 +19,14 @@ public class Diary {
     @DatabaseField(id = true, columnName = "diary_id")
     private Integer year;
     @DatabaseField (foreign = true, foreignAutoRefresh = true)
+    @Expose(serialize = false, deserialize = false)
     private User owner;
     @ForeignCollectionField (eager = true)
+    @Expose(serialize = false, deserialize = false)
     private Collection<DiaryPage> diaryPages;
     @DatabaseField
     private String syncStatus = SyncStatus.P.name();
+    private String userId;
 
     public Diary(){
 
@@ -66,6 +70,14 @@ public class Diary {
         this.syncStatus = syncStatus;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -77,7 +89,6 @@ public class Diary {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(year, owner);
     }
 
@@ -85,5 +96,14 @@ public class Diary {
     public String toString() {
         Gson gson = new Gson();
         return gson.toJson(this);
+    }
+
+    @Override
+    public Diary clone(){
+        Diary d = new Diary();
+        d.setYear(this.getYear());
+        d.setUserId(this.getOwner().getUserId());
+        d.setSyncStatus(this.getSyncStatus());
+        return d;
     }
 }

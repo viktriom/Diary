@@ -23,7 +23,7 @@ public class RestUtil {
         String result = "";
         try {
 
-            HttpClient httpClient = HttpClientBuilder.create().build(); //DefaultHttpClient();
+            HttpClient httpClient = new DefaultHttpClient();//HttpClientBuilder.create().build();
             HttpPost httpPost = new HttpPost(url);
 
             String json = "";

@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * Created by sonu on 11/07/16.
  */
-@DatabaseTable
+@DatabaseTable(tableName = "user")
 public class User {
     @DatabaseField(id = true,columnName = "user_id")
     private String  userId;

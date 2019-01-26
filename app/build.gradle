@@ -18,13 +18,15 @@ dependencies {
     api 'org.bouncycastle:bcprov-jdk15on:1.60'
     api 'org.bouncycastle:bcpkix-jdk15on:1.60'
     implementation 'com.google.code.gson:gson:2.3.1'
+    api 'com.android.support.constraint:constraint-layout:1.1.0'
     api 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
     api 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
     api 'org.apache.httpcomponents:httpclient:4.5.5'
+    api 'com.android.volley:volley:1.1.1'
 }
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion '28.0.3'
 
     defaultConfig {
@@ -44,10 +46,20 @@ android {
         abortOnError false
     }
     packagingOptions {
-        pickFirst 'META-INF/license.txt'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
     }
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 }

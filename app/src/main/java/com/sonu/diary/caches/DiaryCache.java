@@ -7,6 +7,7 @@ import com.sonu.diary.database.DatabaseManager;
 import com.sonu.diary.domain.Diary;
 import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.domain.DiaryPage;
+import com.sonu.diary.services.SyncService;
 import com.sonu.diary.util.DBUtil;
 import com.sonu.diary.util.DateUtils;
 
@@ -47,6 +48,7 @@ public class DiaryCache {
                 e.printStackTrace();
             }
         }
+        SyncService.syncPendingData(null);
     }
 
     public DiaryEntry getDiaryEntry(int index){

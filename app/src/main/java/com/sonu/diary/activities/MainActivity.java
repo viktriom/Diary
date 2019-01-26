@@ -29,6 +29,7 @@ import com.sonu.diary.caches.CacheManager;
 import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
 import com.sonu.diary.handers.ui.DashboardUIHandler;
+import com.sonu.diary.services.SyncService;
 import com.sonu.diary.util.DateUtils;
 import com.sonu.diary.util.SecurityUtil;
 import com.sonu.diary.util.cartesian.CartesianCoordinate;
@@ -271,15 +272,7 @@ public class MainActivity extends AbstractActivity
 
     public void showRoutineEntry(View view) {
         DashboardUIHandler dashboardUIHandler = new DashboardUIHandler();
-        new Thread() {
-            public void run() {
-                try {
-                    SecurityUtil.deffieHelmen2();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
+        SyncService.syncPendingData(this);
     }
 
     public void lblDateTouched(View view) {

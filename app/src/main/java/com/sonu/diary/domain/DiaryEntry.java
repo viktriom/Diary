@@ -1,6 +1,7 @@
 package com.sonu.diary.domain;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.sonu.diary.domain.enums.SyncStatus;
@@ -11,7 +12,7 @@ import java.util.Objects;
 /**
  * Created by sonu on 11/07/16.
  */
-@DatabaseTable
+@DatabaseTable(tableName = "diaryentry")
 public class DiaryEntry {
     @DatabaseField(id = true, columnName = "diaryentry_id")
     private Long entryId;
@@ -42,9 +43,11 @@ public class DiaryEntry {
     @DatabaseField
     private int securityClearanceLevel;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    @Expose(serialize = false, deserialize = false)
     private DiaryPage diaryPage;
     @DatabaseField
     private String syncStatus = SyncStatus.P.name();
+    private long pageId;
 
     public DiaryEntry(){
 
@@ -152,6 +155,15 @@ public class DiaryEntry {
 
     public void setDiaryPage(DiaryPage diaryPage) {
         this.diaryPage = diaryPage;
+        this.pageId = diaryPage.getPageId();
+    }
+
+    public long getPageId(){
+        return this.pageId;
+    }
+
+    public void setPageId(Long pageId){
+        this.pageId = pageId;
     }
 
     public Long getEntryId() {
@@ -220,7 +232,6 @@ public class DiaryEntry {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(entryId);
     }
 
@@ -228,5 +239,24 @@ public class DiaryEntry {
     public String toString() {
         Gson gson = new Gson();
         return gson.toJson(this);
+    }
+
+    @Override
+    public DiaryEntry clone(){
+        DiaryEntry de = new DiaryEntry();
+        de.setEntryId(this.getEntryId());
+        de.setEntryTitle(this.getEntryTitle());
+        de.setEntryDescription(this.getEntryDescription());
+        de.setEntryCreatedOn(this.getEntryCreatedOn());
+        de.setEntryLastUpdatedOn(this.getEntryLastUpdatedOn());
+        de.setEntryActionTime(this.getEntryActionTime());
+        de.setLocation(this.getLocation());
+        de.setEntryExpenditure(this.getEntryExpenditure());
+        de.setEntryExpenditureSource(this.getEntryExpenditureSource());
+        de.setSharable(this.isSharable());
+        de.setExpenseAdded(this.isExpenseAdded());
+        de.setPageId(this.getDiaryPage().getPageId());
+        de.setSyncStatus(this.getSyncStatus());
+        return de;
     }
 }

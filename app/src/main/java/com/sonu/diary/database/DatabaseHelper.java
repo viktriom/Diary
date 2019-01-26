@@ -9,6 +9,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
@@ -21,6 +22,7 @@ import com.sonu.diary.domain.Diary;
 import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.domain.DiaryPage;
 import com.sonu.diary.domain.User;
+import com.sonu.diary.domain.enums.SyncStatus;
 import com.sonu.diary.util.DBUtil;
 import com.sonu.diary.util.DateUtils;
 
@@ -30,7 +32,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 
     private static final String DATABASE_NAME = "diary.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 5;
 
     private Dao<Diary, Integer> diaryDao = null;
     private Dao<User, Integer> personDao = null;
@@ -48,6 +50,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         Log.i(DatabaseHelper.class.getName(), "onCreate");
         createTableForAllTheBeans();
         createDiaryForCurrentYear();
+        addColumnToTable(db, connectionSource);
     }
 
     public void createTableForAllTheBeans() {
@@ -59,6 +62,25 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 } catch (SQLException e) {
                     e.printStackTrace();
                     Log.e(DatabaseHelper.class.getName(), "Table creation for bean " + cls + "UNSUCCESSFUL due to error : " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    public void addColumnToTable(SQLiteDatabase db, ConnectionSource connectionSource) {
+        for(Class cls : dbMappedClassList){
+            if(cls.isAnnotationPresent(DatabaseTable.class)) {
+                System.out.println("Altering table for the bean: " + cls);
+                DatabaseTable annotation = (DatabaseTable)cls.getAnnotation(DatabaseTable.class);
+                String tabName = annotation.tableName();
+                if(tabName.isEmpty()) continue;
+                String alterSql = "alter table " + tabName + " add column syncStatus varchar";
+                String updateSql = "update " + tabName + " set syncStatus = 'N'";
+                try {
+                    db.execSQL(alterSql);
+                    db.execSQL(updateSql);
+                } catch (Exception ex){
+                    Log.e("Alter table ", "Error while adding column to table " + tabName + ".");
                 }
             }
         }
@@ -97,7 +119,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             Dao<User,String> userDao = getDao(User.class);
             Dao<Diary, Integer> diaryDao = getDao(Diary.class);
             Dao<DiaryPage, Long> diaryPageDao = getDao(DiaryPage.class);
-            long recCount = userDao.countOf();
             List<User> users = DBUtil.getUsers("Owner");
             User user;
             if(null == users || users.size() == 0){
@@ -143,16 +164,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         Log.i(DatabaseHelper.class.getName(),"Data SUCCESSFULLY inserted into User and Diary table during application initialization.");
     }
 
+    public void udpateSyncStatus(String query){
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(query);
+    }
+
+
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-        try {
-            //Log.i(DatabaseHelper.class.getName(), "onUpgrade");
-            TableUtils.dropTable(connectionSource, Diary.class, true);
-            onCreate(db, connectionSource);
-        } catch (SQLException e) {
-            //Log.e(DatabaseHelper.class.getName(), "Can't drop databases", e);
-            throw new RuntimeException(e);
-        }
+        Log.i(DatabaseHelper.class.getName(), "Upgrading DB from version : " + oldVersion + " to : " + newVersion);
+        //onCreate(db, connectionSource);
+        addColumnToTable(db, connectionSource);
     }
 
 

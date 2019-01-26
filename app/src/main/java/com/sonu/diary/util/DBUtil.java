@@ -7,20 +7,37 @@ import com.sonu.diary.domain.Diary;
 import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.domain.DiaryPage;
 import com.sonu.diary.domain.User;
+import com.sonu.diary.domain.enums.SyncStatus;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class DBUtil {
 
+    private static QueryBuilder<User, String>  USER_QUERY_BUILDER;
+    private static QueryBuilder<Diary, Integer> DIARY_QUERY_BUILDER;
+    private static QueryBuilder<DiaryPage, Long> DIARY_PAGE_QUERY_BUILDER;
+    private static QueryBuilder<DiaryEntry, Long> DIARY_ENTRY_QUERY_BUILDER;
+
+    static {
+        try {
+            USER_QUERY_BUILDER = (QueryBuilder<User, String>) DatabaseManager.getInstance().getHelper().getDao(User.class).queryBuilder();
+            DIARY_QUERY_BUILDER = (QueryBuilder<Diary, Integer>) DatabaseManager.getInstance().getHelper().getDao(Diary.class).queryBuilder();
+            DIARY_PAGE_QUERY_BUILDER = (QueryBuilder<DiaryPage, Long>) DatabaseManager.getInstance().getHelper().getDao(DiaryPage.class).queryBuilder();
+            DIARY_ENTRY_QUERY_BUILDER = (QueryBuilder<DiaryEntry, Long>) DatabaseManager.getInstance().getHelper().getDao(DiaryEntry.class).queryBuilder();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static List<DiaryPage> getPagesForMonth(int year, int month) throws SQLException {
         long idLow = (month*10000+year);
         long idHigh = (32*100+month)*10000+year;
-        QueryBuilder<DiaryPage, Long> queryBuilder = (QueryBuilder<DiaryPage, Long>) DatabaseManager.getInstance().getHelper().getDao(DiaryPage.class).queryBuilder();
-        Where where = queryBuilder.where();
+        DIARY_PAGE_QUERY_BUILDER.reset();
+        Where where = DIARY_PAGE_QUERY_BUILDER.where();
         where.between("diaryapage_id", idLow, idHigh);
-        queryBuilder.setWhere(where);
-        return queryBuilder.query();
+        DIARY_PAGE_QUERY_BUILDER.setWhere(where);
+        return DIARY_PAGE_QUERY_BUILDER.query();
     }
 
     public static List<DiaryPage> getPagesForCurrentMonth() throws SQLException {
@@ -34,19 +51,19 @@ public class DBUtil {
     }
 
     public static DiaryPage getDiaryPageForDate(Long pageId) throws SQLException {
-        QueryBuilder<DiaryPage, Long> queryBuilder = (QueryBuilder<DiaryPage, Long>) DatabaseManager.getInstance().getHelper().getDao(DiaryPage.class).queryBuilder();
-        Where<DiaryPage, Long> where = queryBuilder.where();
+        DIARY_PAGE_QUERY_BUILDER.reset();
+        Where<DiaryPage, Long> where = DIARY_PAGE_QUERY_BUILDER.where();
         where.eq("diaryapage_id", pageId);
-        queryBuilder.setWhere(where);
-        return queryBuilder.queryForFirst();
+        DIARY_PAGE_QUERY_BUILDER.setWhere(where);
+        return DIARY_PAGE_QUERY_BUILDER.queryForFirst();
     }
 
     public static Diary getDiaryForCurrentYear() throws SQLException {
-        QueryBuilder<Diary, Integer> queryBuilder = (QueryBuilder<Diary, Integer>) DatabaseManager.getInstance().getHelper().getDao(Diary.class).queryBuilder();
-        Where<Diary, Integer> where = queryBuilder.where();
+        DIARY_QUERY_BUILDER.reset();
+        Where<Diary, Integer> where = DIARY_QUERY_BUILDER.where();
         where.eq("diary_id", DateUtils.getCurrentYear());
-        queryBuilder.setWhere(where);
-        return queryBuilder.queryForFirst();
+        DIARY_QUERY_BUILDER.setWhere(where);
+        return DIARY_QUERY_BUILDER.queryForFirst();
     }
 
     public static DiaryEntry getDiaryEntryForId(long id) throws SQLException {
@@ -74,15 +91,43 @@ public class DBUtil {
     }
 
     public static List<User> getUsers(String role) throws SQLException {
-        QueryBuilder<User, String> queryBuilder = (QueryBuilder<User, String>) DatabaseManager.getInstance().getHelper().getDao(User.class).queryBuilder();
-        Where<User, String> where = queryBuilder.where();
+        USER_QUERY_BUILDER.reset();
+        Where<User, String> where = USER_QUERY_BUILDER.where();
         where.eq("role", role);
-        queryBuilder.setWhere(where);
-        return queryBuilder.query();
+        USER_QUERY_BUILDER.setWhere(where);
+        return USER_QUERY_BUILDER.query();
     }
 
-    public static List<User> getAllUsersToBeShared(){
-        return null;
+    public static List<User> getUsersPendingSync() throws SQLException {
+        USER_QUERY_BUILDER.reset();
+        Where<User, String> where = USER_QUERY_BUILDER.where();
+        where.eq("syncStatus", "P").or().isNull("syncStatus");
+        USER_QUERY_BUILDER.setWhere(where);
+        return USER_QUERY_BUILDER.query();
+    }
+
+    public static List<Diary> getDiariesPendingSync() throws SQLException {
+        DIARY_QUERY_BUILDER.reset();
+        Where<Diary, Integer> where = DIARY_QUERY_BUILDER.where();
+        where.eq("syncStatus", "P").or().isNull("syncStatus");
+        DIARY_QUERY_BUILDER.setWhere(where);
+        return DIARY_QUERY_BUILDER.query();
+    }
+
+    public static List<DiaryPage> getDiaryPagesPendingSync() throws SQLException {
+        DIARY_PAGE_QUERY_BUILDER.reset();
+        Where<DiaryPage, Long> where = DIARY_PAGE_QUERY_BUILDER.where();
+        where.eq("syncStatus", "P").or().isNull("syncStatus");
+        DIARY_PAGE_QUERY_BUILDER.setWhere(where);
+        return DIARY_PAGE_QUERY_BUILDER.query();
+    }
+
+    public static List<DiaryEntry> getDiaryEntriesPendingSync() throws SQLException {
+        DIARY_ENTRY_QUERY_BUILDER.reset();
+        Where<DiaryEntry, Long> where = DIARY_ENTRY_QUERY_BUILDER.where();
+        where.eq("syncStatus", "P").or().isNull("syncStatus");
+        DIARY_ENTRY_QUERY_BUILDER.setWhere(where);
+        return DIARY_ENTRY_QUERY_BUILDER.query();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.sonu.diary.domain;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -14,19 +15,22 @@ import java.util.Objects;
 /**
  * Created by sonu on 11/07/16.
  */
-@DatabaseTable
+@DatabaseTable(tableName = "diarypage")
 public class DiaryPage {
 
     @ForeignCollectionField(eager = true)
+    @Expose(serialize = false, deserialize = false)
     private Collection<DiaryEntry> diaryEntry;
     @DatabaseField(id = true, columnName = "diaryapage_id")
     private long pageId;
     @DatabaseField
     private Date pageDate;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    @Expose(serialize = false, deserialize = false)
     private Diary diary;
     @DatabaseField
     private String syncStatus = SyncStatus.P.name();
+    private int diaryId;
 
     public DiaryPage(){
 
@@ -83,6 +87,14 @@ public class DiaryPage {
         this.syncStatus = syncStatus;
     }
 
+    public int getDiaryId() {
+        return diaryId;
+    }
+
+    public void setDiaryId(int diaryId) {
+        this.diaryId = diaryId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,5 +114,15 @@ public class DiaryPage {
     public String toString() {
         Gson gson = new Gson();
         return gson.toJson(this);
+    }
+
+    @Override
+    public DiaryPage clone(){
+        DiaryPage dp = new DiaryPage();
+        dp.setDiaryId(this.getDiary().getYear());
+        dp.setPageId(this.getPageId());
+        dp.setPageDate(this.getPageDate());
+        dp.setSyncStatus(this.getSyncStatus());
+        return dp;
     }
 }
