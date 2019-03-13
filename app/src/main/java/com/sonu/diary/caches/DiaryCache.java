@@ -39,16 +39,17 @@ public class DiaryCache {
         Long pageId = diaryEntry.getDiaryPage().getPageId();
         if(!editMode){
             diaryPageCache.get(pageId).getDiaryEntry().add(diaryEntry);
+            SyncService.syncPendingData(null);
         } else {
             try {
                 DatabaseManager.getInstance().getHelper().getDao(DiaryEntry.class).update(diaryEntry);
                 diaryPageCache.remove(pageId);
                 populatePageCacheForDate(pageId);
+                SyncService.syncPendingData(null);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        SyncService.syncPendingData(null);
     }
 
     public DiaryEntry getDiaryEntry(int index){
@@ -107,12 +108,13 @@ public class DiaryCache {
                     Diary diary = DBUtil.getDiaryForCurrentYear();
                     diaryPage = new DiaryPage();
                     diaryPage.setPageId(pageId);
-                    diaryPage.setPageDate(new Date(DateUtils.getCurrentTimestamp().getTime()));
+                    diaryPage.setPageDate(DateUtils.getDateFromPageId(pageId));
                     diaryPage.setDiaryEntry(new LinkedList<>());
                     diaryPage.setDiary(diary);
                     diary.getDiaryPages().add(diaryPage);
                 }
-                diaryPageCache.put(diaryPage.getPageId(),diaryPage);
+                DiaryPage pageFromDb = DBUtil.getDiaryPageForDate(pageId);
+                diaryPageCache.put(pageFromDb.getPageId(),pageFromDb);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -124,12 +126,9 @@ public class DiaryCache {
     }
 
     public DiaryEntry getDiaryEntryForId(Long entryId){
-        Timestamp ts = new Timestamp(entryId);
         DiaryEntry de = null;
         try {
-            DiaryPage page = DBUtil.getDiaryPageForDate(DateUtils.getNumericDateForPageId(ts));
-            diaryPageCache.put(page.getPageId(), page);
-            de = page.getDiaryEntry().stream().filter(t -> t.getEntryId().equals(entryId)).findFirst().get();
+            de = DBUtil.getDiaryEntryForId(entryId);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -164,8 +163,8 @@ public class DiaryCache {
 
     public void addSearchStringToFilter(String searchString){
         try {
-            filterCondition.like("entryTitle", searchString);
-            filterCondition.or().like("entryDescription", searchString);
+            filterCondition.like("entryTitle", "%"+searchString +"%");
+            filterCondition.or().like("entryDescription", "%"+searchString +"%");
         } catch (SQLException e) {
             e.printStackTrace();
         }

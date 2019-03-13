@@ -12,12 +12,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -28,35 +24,25 @@ import com.sonu.diary.adapters.DiaryEntryAdapter;
 import com.sonu.diary.caches.CacheManager;
 import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
-import com.sonu.diary.handers.ui.DashboardUIHandler;
+import com.sonu.diary.handlers.ui.DashboardUIHandler;
 import com.sonu.diary.services.SyncService;
+import com.sonu.diary.util.DBUtil;
 import com.sonu.diary.util.DateUtils;
-import com.sonu.diary.util.SecurityUtil;
 import com.sonu.diary.util.cartesian.CartesianCoordinate;
 import com.sonu.diary.util.cartesian.CircularPlottingSystem;
 
+import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 
-
-public class MainActivity extends AbstractActivity
-        implements NavigationView.OnNavigationItemSelectedListener, Serializable {
+public class MainActivity extends AbstractActivity implements Serializable {
 
     private boolean floatingMenuShown = false;
     private ListView lstEntries;
     private DiaryEntryAdapter adapter;
-    private TextView pageDate;
     private TextView txtExpenseForDate;
 
     @Override
@@ -68,29 +54,22 @@ public class MainActivity extends AbstractActivity
         initializeUI();
 
         adapter = new DiaryEntryAdapter(MainActivity.this);
-
         lstEntries.setAdapter(adapter);
-
         Context context = this;
 
         lstEntries.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id) {
+            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
                 Intent intent = new Intent(context, GeneralEntry.class);
                 long entryId = (Long)view.getTag();
                 intent.putExtra("entryId",entryId);
                 startActivity(intent);
             }
-
         });
-
 
     }
 
     private void initializeUI() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
@@ -101,25 +80,14 @@ public class MainActivity extends AbstractActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        /*NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        assert navigationView != null;
-        navigationView.setNavigationItemSelectedListener(this);*/
-
         lstEntries = (ListView) findViewById(R.id.lstEntries);
 
-        pageDate = (TextView)findViewById(R.id.txtViewPageDate);
+        TextView pageDate = (TextView) findViewById(R.id.txtViewPageDate);
         pageDate.setText(DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(), DateUtils.DEFAULT_DATE_FORMAT));
 
         txtExpenseForDate = (TextView)findViewById(R.id.txtExpenseForDate);
         String sb = "Expense for Today: ₹" + CacheManager.getDiaryCache().getTotalExpenseForPage();
         txtExpenseForDate.setText(sb);
-
     }
 
     protected void onPostResume() {
@@ -203,12 +171,6 @@ public class MainActivity extends AbstractActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
@@ -233,37 +195,6 @@ public class MainActivity extends AbstractActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_routine) {
-            //showRoutineEntry(item.getActionView());
-            DashboardUIHandler dashboardUIHandler = new DashboardUIHandler();
-            try {
-                dashboardUIHandler.displayAllEntriesForToday(new Date(DateUtils.getCurrentTimestamp().getTime()), this);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
     public void showGeneralEntry(View view){
         Intent intent = new Intent(this, GeneralEntry.class);
         handleFloatingMenu();
@@ -271,7 +202,6 @@ public class MainActivity extends AbstractActivity
     }
 
     public void showRoutineEntry(View view) {
-        DashboardUIHandler dashboardUIHandler = new DashboardUIHandler();
         SyncService.syncPendingData(this);
     }
 
@@ -289,6 +219,12 @@ public class MainActivity extends AbstractActivity
 
     public void imgFilterTouched(View view) {
         Intent intent = new Intent(this, FilterViewController.class);
+        handleFloatingMenu();
+        startActivity(intent);
+    }
+
+    public void showLoginView(View view) {
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 }

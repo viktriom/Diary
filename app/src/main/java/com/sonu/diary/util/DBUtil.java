@@ -1,5 +1,8 @@
 package com.sonu.diary.util;
 
+import android.content.Context;
+import android.os.Environment;
+
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.sonu.diary.database.DatabaseManager;
@@ -9,6 +12,12 @@ import com.sonu.diary.domain.DiaryPage;
 import com.sonu.diary.domain.User;
 import com.sonu.diary.domain.enums.SyncStatus;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -69,7 +78,7 @@ public class DBUtil {
     public static DiaryEntry getDiaryEntryForId(long id) throws SQLException {
         QueryBuilder<DiaryEntry, Long> queryBuilder = getQueryBuilderForDiaryEntry();
         Where<DiaryEntry, Long> where = queryBuilder.where();
-        where.eq("diaryentry_id", DateUtils.getCurrentYear());
+        where.eq("diaryentry_id", id);
         queryBuilder.setWhere(where);
         return queryBuilder.queryForFirst();
     }
@@ -128,6 +137,30 @@ public class DBUtil {
         where.eq("syncStatus", "P").or().isNull("syncStatus");
         DIARY_ENTRY_QUERY_BUILDER.setWhere(where);
         return DIARY_ENTRY_QUERY_BUILDER.query();
+    }
+
+    public static User getDiaryOwner() throws SQLException {
+        USER_QUERY_BUILDER.reset();
+        Where<User, String> where = USER_QUERY_BUILDER.where();
+        where.eq("role", "Owner");
+        USER_QUERY_BUILDER.setWhere(where);
+        return USER_QUERY_BUILDER.queryForFirst();
+    }
+
+    public static void backupDBFile() throws IOException {
+        String dbFilePath = "/data/data/com.sonu.diary/databases/diary.db";
+        FileInputStream in = new FileInputStream(new File(dbFilePath));
+        String dbBackupFileName = Environment.getExternalStorageDirectory() + "/diary_data_backup.db";
+        OutputStream out = new FileOutputStream(dbBackupFileName);
+        byte[] buff = new byte[1024];
+        int length;
+        while ((length = in.read(buff)) > 0){
+            out.write(buff,0, length);
+        }
+
+        out.flush();
+        out.close();
+        in.close();
     }
 
 }

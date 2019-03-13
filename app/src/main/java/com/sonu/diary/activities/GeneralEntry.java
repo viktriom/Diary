@@ -11,6 +11,7 @@ import com.sonu.diary.R;
 import com.sonu.diary.caches.CacheManager;
 import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.domain.DiaryPage;
+import com.sonu.diary.domain.enums.SyncStatus;
 import com.sonu.diary.util.AppUtil;
 import com.sonu.diary.util.DateUtils;
 
@@ -61,6 +62,7 @@ public class GeneralEntry extends AbstractActivity {
     private void initForNew() {
         Log.i(GeneralEntry.class.getName(), "Initializing the general entry.");
         de = new DiaryEntry();
+        de.setSharable(false);
         Log.i(GeneralEntry.class.getName(), "Done Initializing UI Objects.");
         swhIsSharable.setChecked(false);
         Timestamp creationTime = DateUtils.getCurrentTimestamp();
@@ -69,7 +71,7 @@ public class GeneralEntry extends AbstractActivity {
         de.setEntryLastUpdatedOn(creationTime);
         de.setEntryActionTime(creationTime);
         txtEntryActionTime.setText(DateUtils.getStringDateFromTimestampInFormat(creationTime, DateUtils.DEFAULT_TIMESTAMP_FORMAT));
-        creationTimeLabel.setText(DateUtils.getStringDateFromTimestampInFormat(creationTime, DateUtils.DEFAULT_TIMESTAMP_FORMAT));
+        creationTimeLabel.setText("Created:" + DateUtils.getStringDateFromTimestampInFormat(creationTime, DateUtils.DEFAULT_TIMESTAMP_FORMAT));
         String text = lastModifiedTimeLabel.getText().toString();
         lastModifiedTimeLabel.setText(text + DateUtils.getStringDateFromTimestampInFormat(creationTime, DateUtils.DEFAULT_TIMESTAMP_FORMAT));
     }
@@ -89,6 +91,8 @@ public class GeneralEntry extends AbstractActivity {
         String text = lastModifiedTimeLabel.getText().toString();
         lastModifiedTimeLabel.setText(text + DateUtils.getStringDateFromTimestampInFormat(de.getEntryLastUpdatedOn(), DateUtils.DEFAULT_TIMESTAMP_FORMAT));
         de.setEntryLastUpdatedOn(DateUtils.getCurrentTimestamp());
+        swhIsSharable.setChecked(de.isSharable());
+
     }
 
     public void saveGeneralEntry(View view){
@@ -107,6 +111,7 @@ public class GeneralEntry extends AbstractActivity {
         } else {
             de.setExpenseAdded(false);
         }
+        de.setSyncStatus(SyncStatus.P.name());
         if(validationPassed()) {
             Log.i(GeneralEntry.class.getName(), "Saving the generic Entry.");
             CacheManager.getDiaryCache().addOrUpdateEntry(de, editMode);
@@ -143,5 +148,10 @@ public class GeneralEntry extends AbstractActivity {
     public void performActionAfterDateTimeUpdate(Timestamp ts) {
         super.performActionAfterDateTimeUpdate(ts);
         de.setEntryActionTime(ts);
+    }
+
+    public void isSharableTouched(View view) {
+        Switch swh = (Switch)view;
+        de.setSharable(swh.isChecked());
     }
 }

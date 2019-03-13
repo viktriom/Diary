@@ -21,10 +21,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_menu_myplaces"
+        android:src="@drawable/ic_filter_none"
         android:visibility="invisible"
         app:backgroundTint="@color/colorPrimary"
-        android:onClick="showRoutineEntry"
+        android:onClick="imgFilterTouched"
         app:fabSize="mini" />
 
     <android.support.design.widget.FloatingActionButton
@@ -35,6 +35,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_menu_share"
         android:visibility="invisible"
+        android:onClick="showRoutineEntry"
         app:backgroundTint="@color/colorPrimary"
         app:fabSize="mini" />
 
@@ -47,6 +48,7 @@
         android:src="@android:drawable/ic_input_get"
         android:visibility="invisible"
         app:backgroundTint="@color/colorPrimary"
+        android:onClick="showLoginView"
         app:fabSize="mini" />
 
     <android.support.design.widget.FloatingActionButton

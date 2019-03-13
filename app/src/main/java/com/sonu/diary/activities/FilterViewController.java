@@ -31,12 +31,8 @@ public class FilterViewController extends AbstractActivity {
         tvToDate = (TextView) findViewById(R.id.tvToDate);
 
         Timestamp creationTime = DateUtils.getCurrentTimestamp();
-
-        tvFromDate.setText(DateUtils.getStringDateFromTimestampInFormat(creationTime, DateUtils.DEFAULT_DATE_FORMAT));
-        tvToDate.setText(DateUtils.getStringDateFromTimestampInFormat(creationTime, DateUtils.DEFAULT_DATE_FORMAT));
     }
 
-    //437793
     public void applyEntryFilter(View view) {
         CacheManager.getDiaryCache().clearFilters();
         String searchString = ptSearchString.getText().toString();

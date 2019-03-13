@@ -30,7 +30,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.sonu.diary.R;
+import com.sonu.diary.util.DBUtil;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +68,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        try {
+            if(null != DBUtil.getDiaryOwner()){
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.

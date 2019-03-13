@@ -1,4 +1,4 @@
-package com.sonu.diary.handers.ui;
+package com.sonu.diary.handlers.ui;
 
 import android.content.Context;
 import android.support.design.widget.FloatingActionButton;

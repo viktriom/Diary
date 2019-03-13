@@ -1,5 +1,6 @@
 package com.sonu.diary.database;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 
     private static final String DATABASE_NAME = "diary.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 2;
 
     private Dao<Diary, Integer> diaryDao = null;
     private Dao<User, Integer> personDao = null;
@@ -50,7 +51,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         Log.i(DatabaseHelper.class.getName(), "onCreate");
         createTableForAllTheBeans();
         createDiaryForCurrentYear();
-        addColumnToTable(db, connectionSource);
     }
 
     public void createTableForAllTheBeans() {
@@ -67,23 +67,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void addColumnToTable(SQLiteDatabase db, ConnectionSource connectionSource) {
-        for(Class cls : dbMappedClassList){
-            if(cls.isAnnotationPresent(DatabaseTable.class)) {
-                System.out.println("Altering table for the bean: " + cls);
-                DatabaseTable annotation = (DatabaseTable)cls.getAnnotation(DatabaseTable.class);
-                String tabName = annotation.tableName();
-                if(tabName.isEmpty()) continue;
-                String alterSql = "alter table " + tabName + " add column syncStatus varchar";
-                String updateSql = "update " + tabName + " set syncStatus = 'N'";
-                try {
-                    db.execSQL(alterSql);
-                    db.execSQL(updateSql);
-                } catch (Exception ex){
-                    Log.e("Alter table ", "Error while adding column to table " + tabName + ".");
-                }
-            }
-        }
+    public void updateSyncStatusToP() {
+        String updateSql = "update diary set syncStatus = 'P'";
+        updateSyncStatus(updateSql);
+        updateSql = "update diaryPage set syncStatus = 'P'";
+        updateSyncStatus(updateSql);
+        updateSql = "update diaryentry set syncStatus = 'P'";
+        updateSyncStatus(updateSql);
+        updateSql = "update user set syncStatus = 'P'";
+        updateSyncStatus(updateSql);
     }
 
     public void dropAllTables(){
@@ -164,7 +156,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         Log.i(DatabaseHelper.class.getName(),"Data SUCCESSFULLY inserted into User and Diary table during application initialization.");
     }
 
-    public void udpateSyncStatus(String query){
+    public void updateSyncStatus(String query){
         SQLiteDatabase db = getReadableDatabase();
         db.execSQL(query);
     }
@@ -173,8 +165,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         Log.i(DatabaseHelper.class.getName(), "Upgrading DB from version : " + oldVersion + " to : " + newVersion);
-        //onCreate(db, connectionSource);
-        addColumnToTable(db, connectionSource);
     }
 
 

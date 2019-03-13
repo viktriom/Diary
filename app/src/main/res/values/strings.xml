@@ -20,4 +20,17 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="total_expense">Total Expense:</string>
+    <string name="filter_from_date">Touch to select from date.</string>
+    <string name="filter_to_date">Touch to select to date</string>
+    <string name="apply_filter">Apply Filter</string>
+    <string name="clear_filter">Clear Filter</string>
+    <string name="search_string_hint">Enter Search String</string>
+    <string name="user_details_next">Next</string>
+    <string name="user_name">User Name</string>
+    <string name="touch_to_select_date_of_birth">Touch to select Date Of Birth</string>
+    <string name="Group">Group</string>
+    <string name="first_name">First Name</string>
+    <string name="title">Title</string>
+    <string name="last_name">Last Name</string>
 </resources>

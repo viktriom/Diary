@@ -120,7 +120,7 @@ public class SyncService {
     public static void updateSyncStatusInDB(String query){
         DatabaseManager dbManager = DatabaseManager.getInstance();
         DatabaseHelper dbHelper = dbManager.getHelper();
-        dbHelper.udpateSyncStatus(query);
+        dbHelper.updateSyncStatus(query);
     }
 
 }

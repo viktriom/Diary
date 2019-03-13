@@ -18,8 +18,8 @@ import java.util.Objects;
 @DatabaseTable(tableName = "diarypage")
 public class DiaryPage {
 
-    @ForeignCollectionField(eager = true)
     @Expose(serialize = false, deserialize = false)
+    @ForeignCollectionField(eager = true)
     private Collection<DiaryEntry> diaryEntry;
     @DatabaseField(id = true, columnName = "diaryapage_id")
     private long pageId;

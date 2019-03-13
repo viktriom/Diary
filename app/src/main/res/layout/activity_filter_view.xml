@@ -10,80 +10,49 @@
         android:id="@+id/ptSearchString"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5px"
-        android:hint="Enter Search String" />
+        android:layout_margin="13dp"
+        android:hint="@string/search_string_hint"
+        android:importantForAutofill="no"
+        android:inputType="" />
 
-    <TableLayout
+    <TextView
+        android:id="@+id/tvFromDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5px">
+        android:layout_margin="13dp"
+        android:onClick="onFromDateTouched"
+        android:text="@string/filter_from_date"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="14sp" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="12sp"
-            android:layout_margin="10px" />
+    <TextView
+        android:id="@+id/tvToDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="13dp"
+        android:onClick="onToDateTouched"
+        android:text="@string/filter_to_date"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="14sp" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_margin="5px">
+    <Button
+        android:id="@+id/btnApplyFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="13dp"
+        android:onClick="applyEntryFilter"
+        android:text="@string/apply_filter"
+        android:textAlignment="center" />
 
-            <TextView
-                android:id="@+id/lblFromDate"
-                android:layout_marginLeft="5px"
-                android:text="From Date : " />
-
-            <TextView
-                android:id="@+id/tvFromDate"
-                android:layout_gravity="right"
-                android:layout_marginRight="5px"
-                android:onClick="onFromDateTouched"
-                android:text="Current Date" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="12sp"
-            android:layout_margin="5px" />
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_margin="5px">
-
-            <TextView
-                android:id="@+id/lblToDate"
-                android:layout_marginLeft="5px"
-                android:text="To Date : " />
-
-            <TextView
-                android:id="@+id/tvToDate"
-                android:layout_gravity="right"
-                android:layout_marginRight="5px"
-                android:onClick="onToDateTouched"
-                android:text="Current Date" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_margin="5px">
-
-            <Button
-                android:id="@+id/btnApplyFilter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5px"
-                android:onClick="applyEntryFilter"
-                android:text="Apply Filter"
-                android:textAlignment="center" />
-
-            <Button
-                android:id="@+id/btnClearFilter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5px"
-                android:onClick="clearEntryFilter"
-                android:text="Clear Filter"
-                android:textAlignment="center" />
-        </TableRow>
-    </TableLayout>
+    <Button
+        android:id="@+id/btnClearFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="13dp"
+        android:onClick="clearEntryFilter"
+        android:text="@string/clear_filter"
+        android:textAlignment="center" />
 
 </LinearLayout>

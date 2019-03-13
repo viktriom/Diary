@@ -117,6 +117,12 @@ public class DateUtils {
         return getDateFromStringInFormat(strDate, DEFAULT_DATE_FORMAT);
     }
 
+    public static Date getDateFromPageId(Long pageId){
+        String date = pageId.toString();
+        if(date.length() < 8) date = "0" + date;
+        return getDateFromStringInFormat(date, NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS);
+    }
+
     public static Timestamp getTimestampFromString(String strDate){
         Date date = getDateFromString(strDate);
         return new Timestamp(date.getTime());
