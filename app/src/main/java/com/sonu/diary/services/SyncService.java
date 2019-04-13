@@ -4,104 +4,82 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
-import com.sonu.diary.domain.Diary;
 import com.sonu.diary.domain.DiaryEntry;
-import com.sonu.diary.domain.DiaryPage;
-import com.sonu.diary.domain.User;
 import com.sonu.diary.domain.enums.SyncStatus;
+import com.sonu.diary.domain.requestwrapper.RMDiaryEntry;
 import com.sonu.diary.util.DBUtil;
 import com.sonu.diary.util.RestUtil;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
+
 public class SyncService {
-
-    public static String SERVICE_URL = "http://192.168.1.3:8433/diaryserver/";
-
-    public static void syncUsers(Context context){
-        try {
-            List<User> lst = DBUtil.getUsersPendingSync();
-            if(null == lst || lst.size() == 0)
-                return;
-            String data = RestUtil.sendPostRequest(SERVICE_URL+"users", lst);
-            Gson gson = new Gson();
-            Set<String> set = gson.fromJson(data, Set.class);
-            updateSyncStatusInDB(prepareUpdateQuery("user", "user_id", set, true));
-
-        } catch (SQLException e) {
-            Log.e("SERVER SYNC", "Sync could not complete because Sync Util was unable to read data from the server.");
-        }
-    }
-
-    public static void syncDiaryDetails(Context context){
-        try {
-            List<Diary> lst = DBUtil.getDiariesPendingSync().stream().map(Diary::clone).collect(Collectors.toList());
-            if(null == lst || lst.size() == 0)
-                return;
-            String data = RestUtil.sendPostRequest(SERVICE_URL+"diary", lst);
-            Gson gson = new Gson();
-            Set<Integer> set = gson.fromJson(data, Set.class);
-            updateSyncStatusInDB(prepareUpdateQuery("diary", "diary_id", set, false));
-        } catch (SQLException e) {
-            Log.e("SERVER SYNC", "Sync could not complete because Sync Util was unable to read data from the server.");
-        }
-    }
-
-    public static void syncDiaryPageDetails(Context context){
-        try {
-            List<DiaryPage> lst = DBUtil.getDiaryPagesPendingSync().stream().map(DiaryPage::clone).collect(Collectors.toList());
-            if(null == lst || lst.size() == 0)
-                return;
-            String data = RestUtil.sendPostRequest(SERVICE_URL+"diaryPage", lst);
-            Gson gson = new Gson();
-            Set<Long> set = gson.fromJson(data, Set.class);
-            updateSyncStatusInDB(prepareUpdateQuery("diaryPage", "diaryapage_id", set, false));
-        } catch (SQLException e) {
-            Log.e("SERVER SYNC", "Sync could not complete because Sync Util was unable to read data from the server.");
-        }
-    }
 
     public static void syncDiaryEntries(Context context){
         try {
             List<DiaryEntry> lst = DBUtil.getDiaryEntriesPendingSync().stream().map(DiaryEntry::clone).collect(Collectors.toList());
-            if(null == lst || lst.size() == 0)
+            if(lst.size() == 0)
                 return;
-            String data = RestUtil.sendPostRequest(SERVICE_URL+"diaryEntry", lst);
-            Gson gson = new Gson();
-            Set<Long> set = gson.fromJson(data, Set.class);
-            updateSyncStatusInDB(prepareUpdateQuery("diaryEntry", "diaryentry_id", set, false));
+            RMDiaryEntry rmDiaryEntry = new RMDiaryEntry(lst, "viktri_moksh");
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(rmDiaryEntry);
+            StringEntity entity = new StringEntity(json);
+            RestUtil.post(context, "diaryEntry", entity, new AsyncHttpResponseHandler(){
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                    try {
+                        String str = new String(response, "UTF-8");
+                        Gson gson = new Gson();
+                        Set<Integer> set = gson.fromJson(str, Set.class);
+                        updateSyncStatusInDB(prepareUpdateQuery("diary", "diary_id", set, false, SyncStatus.C));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] response, Throwable error) {
+                    try {
+                        String str = new String(response, "UTF-8");
+                        Log.e("SERVER SYNC", "There was an error while contacting the server: " + str);
+                        Log.e("SERVER SYNC", error.getStackTrace().toString());
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            });
         } catch (SQLException e) {
             Log.e("SERVER SYNC", "Sync could not complete because Sync Util was unable to read data from the server.");
+            e.printStackTrace();
+        } catch (JsonProcessingException | UnsupportedEncodingException e) {
+            Log.e("SERVER SYNC", "Error encountered while converting input list to JSON.");
+            e.printStackTrace();
         }
     }
 
     public static void syncPendingData(Context context){
-        new Thread() {
-            public void run() {
-                try {
-                    syncUsers(context);
-                    syncDiaryDetails(context);
-                    syncDiaryPageDetails(context);
-                    syncDiaryEntries(context);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
+        syncDiaryEntries(context);
     }
 
-    public static String prepareUpdateQuery(String tableName, String colName, Iterable collection, boolean isString){
+    public static String prepareUpdateQuery(String tableName, String colName, Iterable collection, boolean isString, SyncStatus status){
         StringBuilder sb = new StringBuilder();
         sb.append("update ");
         sb.append(tableName);
         sb.append(" set syncStatus = \'");
-        sb.append(SyncStatus.C.name());
+        sb.append(status.name());
         sb.append("\' ");
         sb.append("where ");
         sb.append(colName);
