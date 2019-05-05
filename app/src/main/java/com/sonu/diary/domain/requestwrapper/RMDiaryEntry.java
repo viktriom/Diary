@@ -10,13 +10,15 @@ import java.util.Objects;
 public class RMDiaryEntry {
     List<DiaryEntry> entries;
     String groupId;
+    String userId;
 
     public RMDiaryEntry() {
     }
 
-    public RMDiaryEntry(List<DiaryEntry> entries, String groupId) {
+    public RMDiaryEntry(List<DiaryEntry> entries, String groupId, String userId) {
         this.entries = entries;
         this.groupId = groupId;
+        this.userId = userId;
     }
 
     public List<DiaryEntry> getEntries() {
@@ -33,6 +35,14 @@ public class RMDiaryEntry {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override

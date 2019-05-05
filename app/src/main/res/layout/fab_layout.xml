@@ -61,4 +61,27 @@
         android:visibility="invisible"
         app:backgroundTint="@color/colorPrimary"
         app:fabSize="mini" />
+
+    <TextView
+        android:id="@+id/txtExpenseForDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginBottom="20dp"
+        android:text="Testfgdfg" />
+    <TextView
+        android:id="@+id/txtViewPageDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:text="Date"
+        android:onClick="lblDateTouched"/>
+
+    <TextView
+        android:id="@+id/lblAdditional"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:text=""
+        android:onClick="lblDateTouched"/>
 </FrameLayout>

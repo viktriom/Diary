@@ -16,16 +16,6 @@
         android:orientation="vertical"
         android:id="@+id/content">
 
-        <TextView
-            android:id="@+id/txtUserName"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/user_name"
-            android:textAlignment="center"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
         <Spinner
             android:id="@+id/ddTitle"
             android:layout_width="match_parent"
@@ -54,6 +44,16 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:hint="@string/last_name" />
+
+        <TextView
+            android:id="@+id/txtUserName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/user_name"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Spinner
             android:id="@+id/ddGroup"

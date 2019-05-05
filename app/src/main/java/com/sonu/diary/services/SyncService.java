@@ -32,7 +32,7 @@ public class SyncService {
             List<DiaryEntry> lst = DBUtil.getDiaryEntriesPendingSync().stream().map(DiaryEntry::clone).collect(Collectors.toList());
             if(lst.size() == 0)
                 return;
-            RMDiaryEntry rmDiaryEntry = new RMDiaryEntry(lst, "viktri_moksh");
+            RMDiaryEntry rmDiaryEntry = new RMDiaryEntry(lst, "viktri_moksh", "moksh");
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(rmDiaryEntry);
             StringEntity entity = new StringEntity(json);
@@ -43,7 +43,7 @@ public class SyncService {
                         String str = new String(response, "UTF-8");
                         Gson gson = new Gson();
                         Set<Integer> set = gson.fromJson(str, Set.class);
-                        updateSyncStatusInDB(prepareUpdateQuery("diary", "diary_id", set, false, SyncStatus.C));
+                        updateSyncStatusInDB(prepareUpdateQuery("diaryentry", "diaryentry_id", set, false, SyncStatus.C));
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -52,6 +52,10 @@ public class SyncService {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] response, Throwable error) {
                     try {
+                        if(null == response){
+                            Log.e("SERVER SYNC", "Unable to reach the remote service. Status code : " + statusCode);
+                            return;
+                        }
                         String str = new String(response, "UTF-8");
                         Log.e("SERVER SYNC", "There was an error while contacting the server: " + str);
                         Log.e("SERVER SYNC", error.getStackTrace().toString());

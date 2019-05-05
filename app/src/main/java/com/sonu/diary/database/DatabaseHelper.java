@@ -22,6 +22,9 @@ import com.j256.ormlite.table.TableUtils;
 import com.sonu.diary.domain.Diary;
 import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.domain.DiaryPage;
+import com.sonu.diary.domain.EntryEvent;
+import com.sonu.diary.domain.EntryTitle;
+import com.sonu.diary.domain.PaymentMode;
 import com.sonu.diary.domain.User;
 import com.sonu.diary.domain.enums.SyncStatus;
 import com.sonu.diary.util.DBUtil;
@@ -44,7 +47,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    private Class[] dbMappedClassList = {Diary.class, DiaryEntry.class, DiaryPage.class, User.class };
+    private Class[] dbMappedClassList = {Diary.class, DiaryEntry.class, DiaryPage.class, User.class, EntryTitle.class, PaymentMode.class, EntryEvent.class};
 
     @Override
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {

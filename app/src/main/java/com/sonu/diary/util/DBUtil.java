@@ -9,6 +9,9 @@ import com.sonu.diary.database.DatabaseManager;
 import com.sonu.diary.domain.Diary;
 import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.domain.DiaryPage;
+import com.sonu.diary.domain.EntryEvent;
+import com.sonu.diary.domain.EntryTitle;
+import com.sonu.diary.domain.PaymentMode;
 import com.sonu.diary.domain.User;
 import com.sonu.diary.domain.enums.SyncStatus;
 
@@ -27,6 +30,9 @@ public class DBUtil {
     private static QueryBuilder<Diary, Integer> DIARY_QUERY_BUILDER;
     private static QueryBuilder<DiaryPage, Long> DIARY_PAGE_QUERY_BUILDER;
     private static QueryBuilder<DiaryEntry, Long> DIARY_ENTRY_QUERY_BUILDER;
+    private static QueryBuilder<PaymentMode, String> PAYMENT_MODE_QUERY_BUILDER;
+    private static QueryBuilder<EntryTitle, String> ENTRY_TITLE_QUERY_BUILDER;
+    private static QueryBuilder<EntryEvent, String> ENTRY_EVENT_QUERY_BUILDER;
 
     static {
         try {
@@ -34,6 +40,9 @@ public class DBUtil {
             DIARY_QUERY_BUILDER = (QueryBuilder<Diary, Integer>) DatabaseManager.getInstance().getHelper().getDao(Diary.class).queryBuilder();
             DIARY_PAGE_QUERY_BUILDER = (QueryBuilder<DiaryPage, Long>) DatabaseManager.getInstance().getHelper().getDao(DiaryPage.class).queryBuilder();
             DIARY_ENTRY_QUERY_BUILDER = (QueryBuilder<DiaryEntry, Long>) DatabaseManager.getInstance().getHelper().getDao(DiaryEntry.class).queryBuilder();
+            PAYMENT_MODE_QUERY_BUILDER = (QueryBuilder<PaymentMode, String>) DatabaseManager.getInstance().getHelper().getDao(PaymentMode.class).queryBuilder();
+            ENTRY_TITLE_QUERY_BUILDER = (QueryBuilder<EntryTitle, String>) DatabaseManager.getInstance().getHelper().getDao(EntryTitle.class).queryBuilder();
+            ENTRY_EVENT_QUERY_BUILDER = (QueryBuilder<EntryEvent, String>) DatabaseManager.getInstance().getHelper().getDao(EntryEvent.class).queryBuilder();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -145,6 +154,24 @@ public class DBUtil {
         where.eq("role", "Owner");
         USER_QUERY_BUILDER.setWhere(where);
         return USER_QUERY_BUILDER.queryForFirst();
+    }
+
+    public static List<PaymentMode> getPaymentModes() throws SQLException {
+        PAYMENT_MODE_QUERY_BUILDER.reset();
+        PAYMENT_MODE_QUERY_BUILDER.orderBy("description", true);
+        return PAYMENT_MODE_QUERY_BUILDER.query();
+    }
+
+    public static List<EntryTitle> getEntryTitles() throws SQLException {
+        ENTRY_TITLE_QUERY_BUILDER.reset();
+        ENTRY_TITLE_QUERY_BUILDER.orderBy("title", true);
+        return ENTRY_TITLE_QUERY_BUILDER.query();
+    }
+
+    public static List<EntryEvent> getEntryEvents() throws SQLException {
+        ENTRY_EVENT_QUERY_BUILDER.reset();
+        ENTRY_EVENT_QUERY_BUILDER.orderBy("eventname", true);
+        return ENTRY_EVENT_QUERY_BUILDER.query();
     }
 
     public static void backupDBFile() throws IOException {

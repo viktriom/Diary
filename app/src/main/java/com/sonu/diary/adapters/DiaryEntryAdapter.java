@@ -8,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.sonu.diary.R;
 import com.sonu.diary.caches.CacheManager;
 import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.util.DateUtils;
+
+import java.util.Map;
 
 public class DiaryEntryAdapter extends BaseAdapter{
 
@@ -58,16 +61,22 @@ public class DiaryEntryAdapter extends BaseAdapter{
     }
 
     private void populateViewFields(View convertView, DiaryEntry de){
-        TextView txtDescription = (TextView) convertView.findViewById(R.id.description);
-        TextView txtTitle = (TextView) convertView.findViewById(R.id.deTitle);
-        TextView txtCreationTime = (TextView) convertView.findViewById(R.id.creationTime);
+        TextView txtDescription =  convertView.findViewById(R.id.description);
+        TextView txtTitle = convertView.findViewById(R.id.deTitle);
+        TextView txtCreationTime =  convertView.findViewById(R.id.creationTime);
         txtDescription.setText(de.getEntryDescription());
-        txtTitle.setText(de.getEntryTitle());
+        if(null != de.getEntryTitle() && de.getEntryTitle().contains("eventName")){
+            Gson gson = new Gson();
+            Map<String, String> map = gson.<Map<String, String>>fromJson(de.getEntryTitle(), Map.class);
+            txtTitle.setText(String.format("%s|%s", map.get("category"), map.get("eventName")));
+        }else {
+            txtTitle.setText(de.getEntryTitle());
+        }
         String strTime = "[" +
                 DateUtils.getStringDateFromTimestampInFormat(de.getEntryActionTime(), "dd/MMM/YY hh:mm") +
                 "]:";
         txtCreationTime.setText(strTime);
-        TextView expense = (TextView)convertView.findViewById(R.id.deExpense);
+        TextView expense = convertView.findViewById(R.id.deExpense);
         if(de.isExpenseAdded()){
             String sb = de.getEntryExpenditureSource() +
                     ":₹" +

@@ -11,11 +11,38 @@ public class CacheManager {
 
     private static DiaryCache diaryCache = null;
 
+    private static EntryTitleCache entryTitleCache = null;
+
+    private static PaymentModeCache paymentModeCache = null;
+
+    private static EntryEventCache entryEventCache = null;
+
     public static DiaryCache getDiaryCache(){
         if(null == diaryCache){
             diaryCache = new DiaryCache();
         }
         return diaryCache;
+    }
+
+    public static EntryTitleCache getEntryTitleCache() {
+        if(null == entryTitleCache){
+            entryTitleCache = new EntryTitleCache();
+        }
+        return entryTitleCache;
+    }
+
+    public static PaymentModeCache getPaymentModeCache() {
+        if(null == paymentModeCache){
+            paymentModeCache = new PaymentModeCache();
+        }
+        return paymentModeCache;
+    }
+
+    public static EntryEventCache getEntryEventCache() {
+        if ( null == entryEventCache){
+            entryEventCache = new EntryEventCache();
+        }
+        return entryEventCache;
     }
 
 }

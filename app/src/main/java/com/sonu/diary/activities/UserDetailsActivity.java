@@ -15,6 +15,7 @@ public class UserDetailsActivity extends AppCompatActivity {
     }
 
     public void btnNextTouched(View view) {
+
     }
 
     public void onToDateTouched(View view) {
