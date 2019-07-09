@@ -22,6 +22,7 @@ public class DateUtils {
     public static final String DEFAULT_COMPONENT_TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss";
     public static final String DEFAULT_DATE_FORMAT = "dd/MMM/yyyy";
     public static final String NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS = "ddMMyyyy";
+    public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     private static void init(){
         calendar = new GregorianCalendar();
@@ -142,6 +143,18 @@ public class DateUtils {
 
     public static Long getNumericDateForPageId(Timestamp ts){
         return Long.parseLong(DateUtils.getStringDateFromTimestampInFormat(ts, DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS));
+    }
+
+    public static Long getDiaryEntryId(Timestamp tmstmp){
+        return tmstmp.getTime()/1000;
+    }
+
+    public static Long getCurrentDiaryEntryId(){
+        return getDiaryEntryId(getCurrentTimestamp());
+    }
+
+    public static String getMonthName(int month){
+        return MONTHS[month-1];
     }
 
 }

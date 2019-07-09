@@ -1,6 +1,5 @@
 package com.sonu.diary.activities;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,17 +21,23 @@ import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.domain.DiaryPage;
 import com.sonu.diary.domain.EntryEvent;
 import com.sonu.diary.domain.EntryTitle;
+import com.sonu.diary.domain.Groups;
 import com.sonu.diary.domain.PaymentMode;
 import com.sonu.diary.domain.enums.ListType;
 import com.sonu.diary.domain.enums.SyncStatus;
+import com.sonu.diary.remote.GroupDataReceived;
+import com.sonu.diary.remote.SyncService;
+import com.sonu.diary.util.AppConstants;
 import com.sonu.diary.util.AppUtil;
 import com.sonu.diary.util.DateUtils;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-public class GeneralEntry extends AbstractActivity {
+public class GeneralEntry extends AbstractActivity implements GroupDataReceived {
 
     private DiaryEntry de;
     private AutoCompleteTextView acEntryTitle;
@@ -44,12 +49,13 @@ public class GeneralEntry extends AbstractActivity {
     private TextView txtEntryActionTime;
     private TextView txtExpenditureAmount;
     private AutoCompleteTextView acExpenditureSource;
-    private Switch swhIsSharable;
+    private Spinner ddShareGroup;
     private Boolean editMode = false;
 
     private ArrayAdapter<String> paymentModeAdapter;
     private ArrayAdapter<String> entryTitleAdapter;
     private ArrayAdapter<String> entryEventAdapter;
+    private ArrayAdapter<String> groupsAdapter;
 
     private Map<String, String> titleMap = new HashMap<>();
 
@@ -77,6 +83,7 @@ public class GeneralEntry extends AbstractActivity {
         acEntryTitle.setAdapter(entryTitleAdapter);
         acExpenditureSource.setAdapter(paymentModeAdapter);
         acEntryEvent.setAdapter(entryEventAdapter);
+        dataReceived(null);
     }
 
     private void init(){
@@ -93,38 +100,29 @@ public class GeneralEntry extends AbstractActivity {
         txtEntryActionTime = findViewById(R.id.txtEntryActionTime);
         txtExpenditureAmount = findViewById(R.id.txtExpenditure);
         acExpenditureSource = findViewById(R.id.acExpenditureSource);
-        swhIsSharable = findViewById(R.id.swhIsSharable);
+        ddShareGroup = findViewById(R.id.ddShareGroup);
 
         prepareDropDownList();
+        CacheManager.getGroupCache().refreshCacheFromRemoteService(this);
 
 
 
-        acEntryTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus)
-                    acEntryTitle.showDropDown();
+        acEntryTitle.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus)
+                acEntryTitle.showDropDown();
 
-            }
         });
 
+        acExpenditureSource.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus)
+                acExpenditureSource.showDropDown();
 
-        acExpenditureSource.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus)
-                    acExpenditureSource.showDropDown();
-
-            }
         });
 
-        acEntryEvent.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus)
-                    acEntryEvent.showDropDown();
+        acEntryEvent.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus)
+                acEntryEvent.showDropDown();
 
-            }
         });
 
         acEntryTitle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -168,9 +166,8 @@ public class GeneralEntry extends AbstractActivity {
         de = new DiaryEntry();
         de.setSharable(false);
         Log.i(GeneralEntry.class.getName(), "Done Initializing UI Objects.");
-        swhIsSharable.setChecked(false);
         Timestamp creationTime = DateUtils.getCurrentTimestamp();
-        de.setEntryId(creationTime.getTime());
+        de.setEntryId(DateUtils.getDiaryEntryId(creationTime));
         de.setEntryCreatedOn(creationTime);
         de.setEntryLastUpdatedOn(creationTime);
         de.setEntryActionTime(creationTime);
@@ -186,8 +183,8 @@ public class GeneralEntry extends AbstractActivity {
         if(de.getEntryTitle().contains("eventName")){
             Gson gson = new Gson();
             Map<String,String> map = gson.<Map<String, String>>fromJson(de.getEntryTitle(), Map.class);
-            acEntryTitle.setText(map.get("category") == null ? "": map.get("category"));
-            acEntryEvent.setText(map.get("eventName") == null ? "" : map.get("eventName"));
+            acEntryEvent.setText(map.get(AppConstants.EVENT_NAME_KEY) == null ? "": map.get(AppConstants.EVENT_NAME_KEY));
+            acEntryTitle.setText(map.get(AppConstants.TITLE_KEY) == null ? "" : map.get(AppConstants.TITLE_KEY));
         } else {
             acEntryTitle.setSelection(entryTitleAdapter.getPosition(de.getEntryTitle()));
         }
@@ -202,7 +199,6 @@ public class GeneralEntry extends AbstractActivity {
         String text = lastModifiedTimeLabel.getText().toString();
         lastModifiedTimeLabel.setText(String.format("%s%s", text, DateUtils.getStringDateFromTimestampInFormat(de.getEntryLastUpdatedOn(), DateUtils.DEFAULT_TIMESTAMP_FORMAT)));
         de.setEntryLastUpdatedOn(DateUtils.getCurrentTimestamp());
-        swhIsSharable.setChecked(de.isSharable());
     }
 
     public void saveGeneralEntry(View view){
@@ -210,13 +206,14 @@ public class GeneralEntry extends AbstractActivity {
 
         String title = acEntryTitle.getText().toString();
         String event = acEntryEvent.getText().toString();
-        titleMap.put("eventName", title);
-        titleMap.put("category", event);
+        titleMap.put(AppConstants.TITLE_KEY, title);
+        titleMap.put(AppConstants.EVENT_NAME_KEY, event);
         addValueToList(ListType.ENTRY_TITLE, title);
         addValueToList(ListType.ENTRY_EVENT, event);
         DiaryPage currentPage = CacheManager.getDiaryCache().getDiaryPageForDate(de.getEntryActionTime());
         de.setDiaryPage(currentPage);
         de.setEntryDescription(entryDescription.getText().toString());
+        de.setCreatedById(CacheManager.getDiaryCache().getOwner().getUserId());
         de.setLocation(entryLocation.getText().toString());
         String expAmount = null == txtExpenditureAmount.getText()?null:txtExpenditureAmount.getText().toString();
         if(null != expAmount && !expAmount.isEmpty() && !expAmount.equals("0") && AppUtil.isInteger(expAmount, 10)){
@@ -232,10 +229,12 @@ public class GeneralEntry extends AbstractActivity {
         Gson gson = new Gson();
         title = gson.toJson(titleMap);
         de.setEntryTitle(title);
+        de.setSharedGroupId(ddShareGroup.getSelectedItem().toString());
         de.setSyncStatus(SyncStatus.P.name());
         if(validationPassed()) {
             Log.i(GeneralEntry.class.getName(), "Saving the generic Entry.");
             CacheManager.getDiaryCache().addOrUpdateEntry(de, editMode);
+            SyncService.syncPendingData(null);
             finish();
         }else{
             Log.i(GeneralEntry.class.getName(), "Data Validation on the entered data failed.");
@@ -268,12 +267,6 @@ public class GeneralEntry extends AbstractActivity {
 
         if(de.getEntryDescription() == null || de.getEntryDescription().isEmpty()) {
             toast.setText("Please enter a description.");
-            toast.show();
-            return false;
-        }
-
-        if(null == de.getEntryExpenditureSource() || de.getEntryExpenditureSource().isEmpty()){
-            toast.setText("Please select a Expenditure source");
             toast.show();
             return false;
         }
@@ -317,5 +310,14 @@ public class GeneralEntry extends AbstractActivity {
             CacheManager.getEntryEventCache().loadCache();
             acEntryEvent.setAdapter(entryEventAdapter);
         }
+    }
+
+    @Override
+    public void dataReceived(List<Groups> grp) {
+        List<String> lst = new LinkedList<>();
+        lst.add(AppConstants.NOT_SHARED_INDICATOR);
+        lst.addAll(CacheManager.getGroupCache().getKeys());
+        groupsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, lst);
+        ddShareGroup.setAdapter(groupsAdapter);
     }
 }

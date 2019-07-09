@@ -49,7 +49,7 @@ public class DiaryEntryAdapter extends BaseAdapter{
             assert vi != null;
             return vi.inflate(R.layout.list_item_diary_entry, null);
         }
-
+ 
         if( null == convertView) {
             assert vi != null;
             convertView = vi.inflate(R.layout.list_item_diary_entry, null);
@@ -68,7 +68,7 @@ public class DiaryEntryAdapter extends BaseAdapter{
         if(null != de.getEntryTitle() && de.getEntryTitle().contains("eventName")){
             Gson gson = new Gson();
             Map<String, String> map = gson.<Map<String, String>>fromJson(de.getEntryTitle(), Map.class);
-            txtTitle.setText(String.format("%s|%s", map.get("category"), map.get("eventName")));
+            txtTitle.setText(String.format("%s|%s", map.get("eventName"), map.get("category")));
         }else {
             txtTitle.setText(de.getEntryTitle());
         }
@@ -77,7 +77,7 @@ public class DiaryEntryAdapter extends BaseAdapter{
                 "]:";
         txtCreationTime.setText(strTime);
         TextView expense = convertView.findViewById(R.id.deExpense);
-        if(de.isExpenseAdded()){
+        if(de.isExpenseAdded() || (null != de.getEntryExpenditure()) && de.getEntryExpenditure() != 0){
             String sb = de.getEntryExpenditureSource() +
                     ":₹" +
                     String.valueOf(de.getEntryExpenditure());

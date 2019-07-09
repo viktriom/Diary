@@ -2,10 +2,11 @@ package com.sonu.diary.activities;
 
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatDialogFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.sonu.diary.util.DatePicker;
 import com.sonu.diary.util.DateUtils;

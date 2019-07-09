@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.sonu.diary.activities.GeneralEntry">
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -98,15 +98,10 @@
             android:completionHint="Payment Mode"
             />
 
-        <Switch
-            android:id="@+id/swhIsSharable"
+        <Spinner
+            android:id="@+id/ddShareGroup"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lblExpenditure"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="3dp"
-            android:hint="Allow Sharing"
-            android:onClick="isSharableTouched" />
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/btnSave"
@@ -117,6 +112,6 @@
             android:onClick="saveGeneralEntry"
             android:text="Save" />
 
-    </android.support.v7.widget.LinearLayoutCompat>
+    </LinearLayout>
 
 </ScrollView>

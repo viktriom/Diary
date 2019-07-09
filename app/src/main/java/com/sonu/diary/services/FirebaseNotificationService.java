@@ -2,13 +2,16 @@ package com.sonu.diary.services;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.sonu.diary.activities.MainActivity;
+import com.sonu.diary.remote.SyncService;
 import com.sonu.diary.util.AppConstants;
 import com.sonu.diary.util.NotificationUtil;
 
@@ -131,5 +134,15 @@ public class FirebaseNotificationService extends FirebaseMessagingService{
         notificationUtils = new NotificationUtil(context);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         notificationUtils.showNotificationMessage(title, message, timeStamp, intent, imageUrl);
+    }
+
+    @Override
+    public void onNewToken(String token) {
+        Log.d(TAG, "Refreshed token: " + token);
+
+        // If you want to send messages to this application instance or
+        // manage this apps subscriptions on the server side, send the
+        // Instance ID token to your app server.
+        SyncService.sendRegistrationToServer(token);
     }
 }

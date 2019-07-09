@@ -15,36 +15,49 @@
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <TextView
                     android:id="@+id/creationTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:padding="5dip"
-                    android:text="Timestamp"/>
+                    android:text="Timestamp"
+                    android:textColor="#000000"
+                    android:textSize="11sp" />
+
                 <TextView
                     android:id="@+id/deTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:padding="5dip"
-                    android:text="Title"/>
+                    android:text="Title"
+                    android:textColor="#000000"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
             </TableRow>
         </TableLayout>
+
         <TextView
             android:id="@+id/deExpense"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:padding="5dip"
-            android:text="Expense"/>
+            android:text="Expense"
+            android:textColor="#000000"
+            android:textSize="11sp" />
+
         <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
-            android:layout_gravity="left|top|center_vertical"
             android:layout_height="wrap_content"
-            android:padding="5dip"
             android:layout_below="@+id/deExpense"
-            android:text="Description Comes here."/>
+            android:layout_gravity="left|top|center_vertical"
+            android:padding="5dip"
+            android:text="Description Comes here."
+            android:textColor="#000000"
+            android:textSize="11sp" />
     </RelativeLayout>
 </RelativeLayout>

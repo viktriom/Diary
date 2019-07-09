@@ -6,6 +6,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.sonu.diary.domain.enums.SyncStatus;
+import com.sonu.diary.remote.RestUtil;
 
 import java.util.Date;
 import java.util.Collection;
@@ -112,8 +113,7 @@ public class DiaryPage {
 
     @Override
     public String toString() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
+        return RestUtil.getDefaultJsonFormatter().toJson(this);
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.sonu.diary.remote.SyncService;
 import com.sonu.diary.util.NetworkUtil;
 
 public class NetworkStatusService extends BroadcastReceiver {

@@ -1,8 +1,11 @@
 package com.sonu.diary.util;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Environment;
 
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarEntry;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.sonu.diary.database.DatabaseManager;
@@ -11,6 +14,7 @@ import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.domain.DiaryPage;
 import com.sonu.diary.domain.EntryEvent;
 import com.sonu.diary.domain.EntryTitle;
+import com.sonu.diary.domain.Groups;
 import com.sonu.diary.domain.PaymentMode;
 import com.sonu.diary.domain.User;
 import com.sonu.diary.domain.enums.SyncStatus;
@@ -21,8 +25,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.acl.Group;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DBUtil {
 
@@ -33,6 +41,7 @@ public class DBUtil {
     private static QueryBuilder<PaymentMode, String> PAYMENT_MODE_QUERY_BUILDER;
     private static QueryBuilder<EntryTitle, String> ENTRY_TITLE_QUERY_BUILDER;
     private static QueryBuilder<EntryEvent, String> ENTRY_EVENT_QUERY_BUILDER;
+    private static QueryBuilder<Groups, String> GROUP_QUERY_BUILDER;
 
     static {
         try {
@@ -43,25 +52,46 @@ public class DBUtil {
             PAYMENT_MODE_QUERY_BUILDER = (QueryBuilder<PaymentMode, String>) DatabaseManager.getInstance().getHelper().getDao(PaymentMode.class).queryBuilder();
             ENTRY_TITLE_QUERY_BUILDER = (QueryBuilder<EntryTitle, String>) DatabaseManager.getInstance().getHelper().getDao(EntryTitle.class).queryBuilder();
             ENTRY_EVENT_QUERY_BUILDER = (QueryBuilder<EntryEvent, String>) DatabaseManager.getInstance().getHelper().getDao(EntryEvent.class).queryBuilder();
+            GROUP_QUERY_BUILDER = (QueryBuilder<Groups, String>) DatabaseManager.getInstance().getHelper().getDao(Groups.class).queryBuilder();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static List<DiaryPage> getPagesForMonth(int year, int month) throws SQLException {
-        long idLow = (month*10000+year);
-        long idHigh = (32*100+month)*10000+year;
-        DIARY_PAGE_QUERY_BUILDER.reset();
-        Where where = DIARY_PAGE_QUERY_BUILDER.where();
-        where.between("diaryapage_id", idLow, idHigh);
-        DIARY_PAGE_QUERY_BUILDER.setWhere(where);
-        return DIARY_PAGE_QUERY_BUILDER.query();
+    public static int getExpenseForMonth(int year, int month) {
+
+        String query = "select sum(entryExpenditure) from diaryentry where diarypage_id%10000 = " + year + " and  (diarypage_id%1000000)/10000 = " + month + ";";
+
+        final Cursor cursor = DatabaseManager.getInstance().getHelper().getReadableDatabase().
+                rawQuery(query, null);
+        int sum = 0;
+        if(null != cursor) {
+            try {
+                if(cursor.moveToFirst()) {
+                    sum = cursor.getInt(0);
+                }
+            }finally {
+                cursor.close();
+            }
+        }
+        return sum;
     }
 
-    public static List<DiaryPage> getPagesForCurrentMonth() throws SQLException {
-        int year = DateUtils.getCurrentYear();
-        int month = DateUtils.getCurrentMonth();
-        return getPagesForMonth(year, month);
+    public static List<BarEntry> expenceReportForYear(int year){
+        List<BarEntry> stats = new ArrayList<>();
+        String query = "select (diarypage_id%1000000)/10000 month, sum(entryexpenditure) from diaryentry where diarypage_id%10000 = " + year + " group by month";
+        final Cursor cursor = DatabaseManager.getInstance().getHelper().getReadableDatabase().rawQuery(query, null);
+        if(null != cursor){
+            try {
+                while(cursor.moveToNext()){
+                    BarEntry entry = new BarEntry(cursor.getInt(0), cursor.getInt(1));
+                    stats.add(entry);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return stats;
     }
 
     public static DiaryPage getTodaysPage() throws SQLException {
@@ -116,12 +146,28 @@ public class DBUtil {
         return USER_QUERY_BUILDER.query();
     }
 
+    public static List<User> getAllUsers() throws SQLException {
+        USER_QUERY_BUILDER.reset();
+        Where<User, String> where = USER_QUERY_BUILDER.where();
+        where.isNotNull("user_id");
+        USER_QUERY_BUILDER.setWhere(where);
+        return USER_QUERY_BUILDER.query();
+    }
+
     public static List<User> getUsersPendingSync() throws SQLException {
         USER_QUERY_BUILDER.reset();
         Where<User, String> where = USER_QUERY_BUILDER.where();
         where.eq("syncStatus", "P").or().isNull("syncStatus");
         USER_QUERY_BUILDER.setWhere(where);
         return USER_QUERY_BUILDER.query();
+    }
+
+    public static User getUser(String userId) throws SQLException {
+        USER_QUERY_BUILDER.reset();
+        Where<User, String> where = USER_QUERY_BUILDER.where();
+        where.eq("user_id", userId);
+        USER_QUERY_BUILDER.setWhere(where);
+        return USER_QUERY_BUILDER.queryForFirst();
     }
 
     public static List<Diary> getDiariesPendingSync() throws SQLException {
@@ -143,7 +189,7 @@ public class DBUtil {
     public static List<DiaryEntry> getDiaryEntriesPendingSync() throws SQLException {
         DIARY_ENTRY_QUERY_BUILDER.reset();
         Where<DiaryEntry, Long> where = DIARY_ENTRY_QUERY_BUILDER.where();
-        where.eq("syncStatus", "P").or().isNull("syncStatus");
+        where.not().eq("sharedGroupId", AppConstants.NOT_SHARED_INDICATOR).and().eq("syncStatus", SyncStatus.P.name()).or().isNull("syncStatus");
         DIARY_ENTRY_QUERY_BUILDER.setWhere(where);
         return DIARY_ENTRY_QUERY_BUILDER.query();
     }
@@ -151,7 +197,7 @@ public class DBUtil {
     public static User getDiaryOwner() throws SQLException {
         USER_QUERY_BUILDER.reset();
         Where<User, String> where = USER_QUERY_BUILDER.where();
-        where.eq("role", "Owner");
+        where.eq("role", AppConstants.OWNER_ROLE);
         USER_QUERY_BUILDER.setWhere(where);
         return USER_QUERY_BUILDER.queryForFirst();
     }
@@ -172,6 +218,12 @@ public class DBUtil {
         ENTRY_EVENT_QUERY_BUILDER.reset();
         ENTRY_EVENT_QUERY_BUILDER.orderBy("eventname", true);
         return ENTRY_EVENT_QUERY_BUILDER.query();
+    }
+
+    public static List<Groups> getGroups() throws SQLException {
+        GROUP_QUERY_BUILDER.reset();
+        GROUP_QUERY_BUILDER.orderBy("groupId", true);
+        return GROUP_QUERY_BUILDER.query();
     }
 
     public static void backupDBFile() throws IOException {

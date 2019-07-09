@@ -19,14 +19,17 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableUtils;
+import com.sonu.diary.caches.CacheManager;
 import com.sonu.diary.domain.Diary;
 import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.domain.DiaryPage;
 import com.sonu.diary.domain.EntryEvent;
 import com.sonu.diary.domain.EntryTitle;
+import com.sonu.diary.domain.Groups;
 import com.sonu.diary.domain.PaymentMode;
 import com.sonu.diary.domain.User;
 import com.sonu.diary.domain.enums.SyncStatus;
+import com.sonu.diary.remote.RestUtil;
 import com.sonu.diary.util.DBUtil;
 import com.sonu.diary.util.DateUtils;
 
@@ -36,7 +39,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 
     private static final String DATABASE_NAME = "diary.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 9;
 
     private Dao<Diary, Integer> diaryDao = null;
     private Dao<User, Integer> personDao = null;
@@ -47,7 +50,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    private Class[] dbMappedClassList = {Diary.class, DiaryEntry.class, DiaryPage.class, User.class, EntryTitle.class, PaymentMode.class, EntryEvent.class};
+    private Class[] dbMappedClassList = {Diary.class, DiaryEntry.class, DiaryPage.class, User.class, EntryTitle.class, PaymentMode.class, EntryEvent.class, Groups.class};
 
     @Override
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
@@ -111,17 +114,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public void createDiaryForCurrentYear() {
         try {
-            Dao<User,String> userDao = getDao(User.class);
+
             Dao<Diary, Integer> diaryDao = getDao(Diary.class);
             Dao<DiaryPage, Long> diaryPageDao = getDao(DiaryPage.class);
-            List<User> users = DBUtil.getUsers("Owner");
-            User user;
-            if(null == users || users.size() == 0){
-                    user = new User("viktri","Mr", "Vivek", "Tripathi", "", "tripathi", "Owner", DateUtils.getDateFromString("02/07/1988"));
-                    userDao.create(user);
-            } else {
-                user = users.get(0);
-            }
 
             Diary diary = diaryDao.queryForId(DateUtils.getCurrentYear());
             long diaryPageId = Long.parseLong(DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(), DateUtils.NUMERIC_DATE_FORMAT_WITHOUT_SEPARATORS));
@@ -133,7 +128,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                      diaryPage.setPageDate(new Date(DateUtils.getCurrentTimestamp().getTime()));
                      diaryPage.setDiaryEntry(null);
                      diary.setYear(getCurrentYear());
-                     diary.setOwner(user);
+                     diary.setOwner(CacheManager.getDiaryCache().getOwner());
                      diaryPage.setDiary(diary);
                      diaryPageList.add(diaryPage);
                      diary.setDiaryPages(diaryPageList);
@@ -164,12 +159,23 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         db.execSQL(query);
     }
 
+    public void deleteDataFromTable(String tableName){
+
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         Log.i(DatabaseHelper.class.getName(), "Upgrading DB from version : " + oldVersion + " to : " + newVersion);
     }
 
+
+    public void registerUser(User user){
+        if(null == user || null == user.getUserId()) {
+            return;
+        }
+        String json = RestUtil.getDefaultJsonFormatter().toJson(user);
+
+    }
 
     public Dao<?, ?> getRuntimeDao(Class cls) throws SQLException {
         Dao<?,?> dao = daoMap.get(cls.getName());

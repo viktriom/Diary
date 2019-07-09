@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.sonu.diary.domain.enums.SyncStatus;
+import com.sonu.diary.remote.RestUtil;
 import com.sonu.diary.util.DateUtils;
 
 import java.util.Date;
@@ -155,7 +156,6 @@ public class User {
 
     @Override
     public String toString() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
+        return RestUtil.getDefaultJsonFormatter().toJson(this);
     }
 }

@@ -3,13 +3,8 @@ package com.sonu.diary.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
@@ -19,36 +14,46 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sonu.diary.R;
 import com.sonu.diary.adapters.DiaryEntryAdapter;
 import com.sonu.diary.caches.CacheManager;
 import com.sonu.diary.database.DatabaseHelper;
 import com.sonu.diary.database.DatabaseManager;
-import com.sonu.diary.handlers.ui.DashboardUIHandler;
-import com.sonu.diary.services.SyncService;
+import com.sonu.diary.domain.DiaryEntry;
+import com.sonu.diary.remote.EntryDataReceived;
+
+import com.sonu.diary.remote.SyncService;
 import com.sonu.diary.util.DBUtil;
 import com.sonu.diary.util.DateUtils;
+import com.sonu.diary.util.SecurityUtil;
 import com.sonu.diary.util.cartesian.CartesianCoordinate;
 import com.sonu.diary.util.cartesian.CircularPlottingSystem;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Date;
+import java.util.List;
 
 
-public class MainActivity extends AbstractActivity implements Serializable {
+public class MainActivity extends AbstractActivity implements Serializable, EntryDataReceived {
 
     private boolean floatingMenuShown = false;
     private ListView lstEntries;
     private DiaryEntryAdapter adapter;
     private TextView txtExpenseForDate;
+    private TextView txtExpenseForMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DatabaseManager.init(this.getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(null == CacheManager.getDiaryCache().getOwner()){
+            Intent intent = new Intent(this, UserDetailsActivity.class);
+            handleFloatingMenu();
+            startActivity(intent);
+        }
 
         initializeDbOperations();
         initializeUI();
@@ -66,12 +71,11 @@ public class MainActivity extends AbstractActivity implements Serializable {
                 startActivity(intent);
             }
         });
-
     }
 
     private void initializeUI() {
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,12 +84,13 @@ public class MainActivity extends AbstractActivity implements Serializable {
             }
         });
 
-        lstEntries = (ListView) findViewById(R.id.lstEntries);
+        lstEntries = findViewById(R.id.lstEntries);
 
-        TextView pageDate = (TextView) findViewById(R.id.txtViewPageDate);
+        TextView pageDate = findViewById(R.id.txtViewPageDate);
         pageDate.setText(DateUtils.getStringDateFromTimestampInFormat(DateUtils.getCurrentTimestamp(), DateUtils.DEFAULT_DATE_FORMAT));
 
-        txtExpenseForDate = (TextView)findViewById(R.id.txtExpenseForDate);
+        txtExpenseForDate = findViewById(R.id.txtExpenseForDate);
+        txtExpenseForMonth = findViewById(R.id.txtExpenseForMonth);
         String sb = "Expense for Today: ₹" + CacheManager.getDiaryCache().getTotalExpenseForPage();
         txtExpenseForDate.setText(sb);
     }
@@ -93,12 +98,18 @@ public class MainActivity extends AbstractActivity implements Serializable {
     protected void onPostResume() {
         super.onPostResume();
         adapter.notifyDataSetChanged();
+
         String sb = "Expense for Today: ₹" + CacheManager.getDiaryCache().getTotalExpenseForPage();
         txtExpenseForDate.setText(sb);
+
+        sb = "Expense for Month: ₹" + CacheManager.getDiaryCache().getTotalExpenseForCurrentMonth();
+        txtExpenseForMonth.setText(sb);
+
+        SyncService.getEntriesFromServer(this);
+        SyncService.syncDiaryEntries(this);
     }
 
     private void initializeDbOperations() {
-        DatabaseManager.init(this.getApplicationContext());
         DatabaseManager dbManager = DatabaseManager.getInstance();
         DatabaseHelper dbHelper = dbManager.getHelper();
         dbHelper.createTableForAllTheBeans();
@@ -107,11 +118,11 @@ public class MainActivity extends AbstractActivity implements Serializable {
     }
 
     private void handleFloatingMenu() {
-        FloatingActionButton fab1 = (FloatingActionButton)findViewById(R.id.fab_1);
-        FloatingActionButton fab2 = (FloatingActionButton)findViewById(R.id.fab_2);
-        FloatingActionButton fab3 = (FloatingActionButton)findViewById(R.id.fab_3);
-        FloatingActionButton fab4 = (FloatingActionButton)findViewById(R.id.fab_4);
-        FloatingActionButton fab5 = (FloatingActionButton)findViewById(R.id.fab_5);
+        FloatingActionButton fab1 = findViewById(R.id.fab_1);
+        FloatingActionButton fab2 = findViewById(R.id.fab_2);
+        FloatingActionButton fab3 = findViewById(R.id.fab_3);
+        FloatingActionButton fab4 = findViewById(R.id.fab_4);
+        FloatingActionButton fab5 = findViewById(R.id.fab_5);
         Animation showFab1 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab1_show);
 
 
@@ -188,9 +199,9 @@ public class MainActivity extends AbstractActivity implements Serializable {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -203,6 +214,10 @@ public class MainActivity extends AbstractActivity implements Serializable {
 
     public void showRoutineEntry(View view) {
         SyncService.syncPendingData(this);
+        Intent intent = new Intent(this, TrendsViewController.class);
+        handleFloatingMenu();
+        startActivity(intent);
+        SyncService.testEnc();
     }
 
     public void lblDateTouched(View view) {
@@ -224,7 +239,11 @@ public class MainActivity extends AbstractActivity implements Serializable {
     }
 
     public void showLoginView(View view) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+
+    }
+
+    @Override
+    public void dataReceived(List<DiaryEntry> entries){
+        adapter.notifyDataSetChanged();
     }
 }

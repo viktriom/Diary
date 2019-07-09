@@ -2,10 +2,12 @@ package com.sonu.diary.handlers.ui;
 
 import android.app.ListActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+
 import android.widget.ArrayAdapter;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.sonu.diary.R;
 import com.sonu.diary.database.DatabaseManager;

@@ -17,6 +17,10 @@ public class CacheManager {
 
     private static EntryEventCache entryEventCache = null;
 
+    private static GroupCache groupCache = null;
+
+    private static UserCache userCache = null;
+
     public static DiaryCache getDiaryCache(){
         if(null == diaryCache){
             diaryCache = new DiaryCache();
@@ -43,6 +47,20 @@ public class CacheManager {
             entryEventCache = new EntryEventCache();
         }
         return entryEventCache;
+    }
+
+    public static GroupCache getGroupCache() {
+        if ( null == groupCache){
+            groupCache = new GroupCache();
+        }
+        return groupCache;
+    }
+
+    public static UserCache getUserCache() {
+        if( null == userCache){
+            userCache = new UserCache();
+        }
+        return userCache;
     }
 
 }

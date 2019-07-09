@@ -4,7 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "entry_titles")
-public class EntryTitle {
+public class EntryTitle extends AbstractDomain {
 
     @DatabaseField
     private String title;
@@ -15,5 +15,10 @@ public class EntryTitle {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Override
+    public String getKey() {
+        return title;
     }
 }

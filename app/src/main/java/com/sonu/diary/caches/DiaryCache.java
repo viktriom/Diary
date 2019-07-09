@@ -7,13 +7,12 @@ import com.sonu.diary.database.DatabaseManager;
 import com.sonu.diary.domain.Diary;
 import com.sonu.diary.domain.DiaryEntry;
 import com.sonu.diary.domain.DiaryPage;
-import com.sonu.diary.services.SyncService;
+import com.sonu.diary.domain.User;
 import com.sonu.diary.util.DBUtil;
 import com.sonu.diary.util.DateUtils;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,18 +33,18 @@ public class DiaryCache {
 
     private Where<DiaryEntry, Long> filterCondition = DBUtil.getQueryBuilderForDiaryEntry().where();
 
+    private User owner;
+
 
     public void addOrUpdateEntry(DiaryEntry diaryEntry, Boolean editMode){
         Long pageId = diaryEntry.getDiaryPage().getPageId();
         if(!editMode){
             diaryPageCache.get(pageId).getDiaryEntry().add(diaryEntry);
-            SyncService.syncPendingData(null);
         } else {
             try {
                 DatabaseManager.getInstance().getHelper().getDao(DiaryEntry.class).update(diaryEntry);
                 diaryPageCache.remove(pageId);
-                populatePageCacheForDate(pageId);
-                SyncService.syncPendingData(null);
+                getDiaryPageForPageId(pageId);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -93,17 +92,28 @@ public class DiaryCache {
     }
 
     public int getTotalExpenseForPage(){
-        return getDiaryEntries().stream().filter(DiaryEntry::isExpenseAdded).map(DiaryEntry::getEntryExpenditure).reduce(0, (t1, t2)->t1+t2);
+        return getDiaryEntries().stream().filter(t -> ( null != t.getEntryExpenditure() && 0 != t.getEntryExpenditure()))
+                .map(DiaryEntry::getEntryExpenditure).reduce(0, (t1, t2)->t1+t2);
+    }
+
+    public int getTotalExpenseForCurrentMonth(){
+        return getTotalExpenseForMonth(DateUtils.getCurrentYear(), DateUtils.getCurrentMonth()+1);
+    }
+
+    public int getTotalExpenseForMonth(int year, int month)  {
+        return DBUtil.getExpenseForMonth(year, month);
     }
 
     public void populatePageForCurrentDate(){
-        populatePageCacheForDate(currentPageId);
+        getDiaryPageForPageId(currentPageId);
     }
 
-    public void populatePageCacheForDate(Long pageId){
+    public DiaryPage getDiaryPageForPageId(Long pageId){
+
         if(null == diaryPageCache.get(pageId)) {
+            DiaryPage diaryPage = null;
             try {
-                DiaryPage diaryPage = DBUtil.getDiaryPageForDate(pageId);
+                 diaryPage = DBUtil.getDiaryPageForDate(pageId);
                 if (null == diaryPage) {
                     Diary diary = DBUtil.getDiaryForCurrentYear();
                     diaryPage = new DiaryPage();
@@ -118,7 +128,11 @@ public class DiaryCache {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            return diaryPage;
+        } else {
+            return diaryPageCache.get(pageId);
         }
+
     }
 
     public void initializeCaches(Context context){
@@ -147,7 +161,7 @@ public class DiaryCache {
 
     public DiaryPage getDiaryPageForDate(Timestamp ts){
         Long pageId = DateUtils.getNumericDateForPageId(ts);
-        populatePageCacheForDate(pageId);
+        getDiaryPageForPageId(pageId);
         return diaryPageCache.get(pageId);
     }
 
@@ -178,6 +192,17 @@ public class DiaryCache {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public User getOwner() {
+        if(null == owner){
+            try {
+                owner = DBUtil.getDiaryOwner();
+            } catch(Exception ex){
+            }
+        }
+        return owner;
+
     }
 
     public boolean isFIlterApplied(){ return isFilterApplied; }

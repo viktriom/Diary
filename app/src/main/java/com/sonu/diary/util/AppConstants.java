@@ -18,6 +18,18 @@ public class AppConstants {
 
     public static final String SHARED_PREF = "ah_firebase";
 
-    public static final String REMOTE_SERVICE_HOSTNAME="http://aninvestmentadvisor.com:8091";
+    //public static final String REMOTE_SERVICE_HOSTNAME="http://vakkr.com:8433/diaryserver/";
+
+    //public static final String REMOTE_SERVICE_HOSTNAME="http://192.168.1.3:8433/diaryserver/";
+
+    public static final String REMOTE_SERVICE_HOSTNAME="http://192.168.1.7:8433/diaryserver/";
+
+    public static final String NOT_SHARED_INDICATOR = "None";
+
+    public static final String OWNER_ROLE = "Owner";
+
+    public static final String TITLE_KEY = "category";
+
+    public static final String EVENT_NAME_KEY = "eventName";
 
 }

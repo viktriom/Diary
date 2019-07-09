@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.sonu.diary.domain.enums.SyncStatus;
+import com.sonu.diary.remote.RestUtil;
 
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -45,8 +46,12 @@ public class DiaryEntry {
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     @Expose(serialize = false, deserialize = false)
     private DiaryPage diaryPage;
+    @DatabaseField(columnName = "createdbyid")
+    private String createdById;
     @DatabaseField
     private String syncStatus = SyncStatus.P.name();
+    @DatabaseField
+    private String sharedGroupId;
     private long pageId;
 
     public DiaryEntry(){
@@ -222,6 +227,22 @@ public class DiaryEntry {
         this.syncStatus = syncStatus;
     }
 
+    public String getSharedGroupId() {
+        return sharedGroupId;
+    }
+
+    public void setSharedGroupId(String sharedGroupId) {
+        this.sharedGroupId = sharedGroupId;
+    }
+
+    public String getCreatedById() {
+        return createdById;
+    }
+
+    public void setCreatedById(String createdById) {
+        this.createdById = createdById;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -237,8 +258,7 @@ public class DiaryEntry {
 
     @Override
     public String toString() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
+        return RestUtil.getDefaultJsonFormatter().toJson(this);
     }
 
     @Override
@@ -257,6 +277,8 @@ public class DiaryEntry {
         de.setExpenseAdded(this.isExpenseAdded());
         de.setPageId(this.getDiaryPage().getPageId());
         de.setSyncStatus(this.getSyncStatus());
+        de.setSharedGroupId(this.getSharedGroupId());
+        de.setCreatedById(this.getCreatedById());
         return de;
     }
 }
